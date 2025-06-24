@@ -1,0 +1,26 @@
+# Recommendation Systems Course - Requirements
+# Optimized for M2 Mac local development
+
+# Core Data Science Libraries
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Machine Learning and Recommendation Systems
+scikit-surprise>=1.1.3
+
+# Jupyter Notebook
+jupyter>=1.0.0
+ipykernel>=6.0.0
+
+# Optional: For enhanced data analysis and visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Optional: For progress bars during long computations
+tqdm>=4.65.0
+
+# Note: Install with: pip install -r requirements.txt
+# For M2 Mac, consider using conda for better performance:
+# conda install -c conda-forge numpy pandas scipy matplotlib seaborn jupyter
+# pip install scikit-surprise 

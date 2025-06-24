@@ -1,0 +1,51 @@
+{
+  "name": "recommendation-systems-explorer",
+  "version": "1.0.0",
+  "description": "Interactive, visual, and educational website for learning recommendation systems",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "serve": "python -m http.server 8000",
+    "test": "echo \"Open http://localhost:8000 in your browser to test\"",
+    "build": "echo \"No build process needed for static site\"",
+    "deploy": "echo \"Deploy to GitHub Pages or Vercel - see DEPLOYMENT_README.md for instructions\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/recommendation-systems-explorer.git"
+  },
+  "keywords": [
+    "recommendation-systems",
+    "collaborative-filtering",
+    "machine-learning",
+    "svd",
+    "knn",
+    "ease",
+    "movielens",
+    "interactive",
+    "education",
+    "visualization",
+    "data-science"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/recommendation-systems-explorer/issues"
+  },
+  "homepage": "https://yourusername.github.io/recommendation-systems-explorer",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=12.0.0",
+    "python": ">=3.6.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "config": {
+    "port": 8000
+  }
+} 

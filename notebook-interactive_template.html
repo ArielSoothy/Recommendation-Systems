@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtificialGate - CNN Explorer | Interactive MNIST Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="visualizations.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .notebook-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .project-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .project-header h1 {
+            font-size: 3em;
+            margin: 0;
+            background: linear-gradient(45deg, #06b6d4, #00f2fe);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .project-header p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+
+        .nav-pills {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-pill {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-pill:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-pill.active {
+            background: linear-gradient(45deg, #06b6d4, #0891b2);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .notebook-cell {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .notebook-cell:hover {
+            transform: translateY(-5px);
+        }
+
+        .cell-header {
+            background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .cell-header:hover {
+            background: linear-gradient(90deg, #1d4ed8 0%, #6d28d9 100%);
+        }
+
+        .cell-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .cell-header.expanded i {
+            transform: rotate(180deg);
+        }
+
+        .cell-content {
+            padding: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .cell-content.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            background: linear-gradient(45deg, #06b6d4, #0891b2);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .code-block {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: #e2e8f0;
+            border-radius: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+            font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .code-header {
+            background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            padding: 10px 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-language {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .code-content {
+            padding: 20px;
+            overflow-x: auto;
+            line-height: 1.7;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .code-content pre {
+            margin: 0;
+            padding: 0;
+            background: none;
+            border: none;
+            font-size: 0.95em;
+        }
+
+        /* Syntax highlighting */
+        .keyword { color: #ff6b6b; font-weight: 600; }
+        .string { color: #68d391; }
+        .comment { color: #a0aec0; font-style: italic; }
+        .function { color: #63b3ed; }
+        .variable { color: #fbb6ce; }
+        .number { color: #f6ad55; }
+
+        .result-box {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: scale(1.05);
+        }
+
+        .metric-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+        }
+
+        .metric-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #2563eb;
+        }
+
+        .insight-box h4 {
+            margin: 0 0 10px 0;
+            color: #1e40af;
+        }
+
+        .insight-box p {
+            margin: 0;
+            color: #1e3a8a;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .architecture-diagram {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .model-layer {
+            display: inline-block;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .arrow {
+            font-size: 1.5em;
+            color: #2563eb;
+            margin: 0 10px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .digit-image {
+            width: 100%;
+            height: 100px;
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .prediction-correct {
+            border-color: #22c55e;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .prediction-wrong {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .nav-pills {
+                flex-direction: column;
+            }
+            
+            .project-header h1 {
+                font-size: 2em;
+            }
+
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notebook-container">
+        <!-- Project Header -->
+        <div class="project-header">
+            <h1>🧠 ArtificialGate CNN Explorer</h1>
+            <p><strong>Project:</strong> MNIST Digit Recognition | <strong>Framework:</strong> TensorFlow/Keras</p>
+            <p>Interactive CNN Analysis & Visualization</p>
+        </div>
+
+        <!-- Navigation Pills -->
+        <div class="nav-pills">
+            <div class="nav-pill active" onclick="showSection('data-prep')">
+                <i class="fas fa-database"></i> Data Preparation
+            </div>
+            <div class="nav-pill" onclick="showSection('architecture')">
+                <i class="fas fa-sitemap"></i> Model Architecture
+            </div>
+            <div class="nav-pill" onclick="showSection('training')">
+                <i class="fas fa-chart-line"></i> Training Results
+            </div>
+            <div class="nav-pill" onclick="showSection('predictions')">
+                <i class="fas fa-eye"></i> Predictions & Analysis
+            </div>
+        </div>
+
+        <!-- DATA PREPARATION SECTION -->
+        <div id="data-prep" class="section active">
+            <!-- Dataset Loading -->
+            <div class="notebook-cell">
+                <div class="cell-header" onclick="toggleCell(this)">
+                    <span><span class="question-number">1</span>Loading & Preprocessing MNIST Dataset</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="cell-content">
+                    <h3>🎯 What we're doing:</h3>
+                    <p>Loading the famous MNIST dataset of handwritten digits and preparing it for our CNN model.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span><i class="fas fa-code"></i> Data Loading</span>
+                            <div>
+                                <span class="code-language">Python</span>
+                                <button class="copy-button" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+                            <pre><code><span class="keyword">import</span> <span class="variable">tensorflow</span> <span class="keyword">as</span> <span class="variable">tf</span>
+<span class="keyword">from</span> <span class="variable">tensorflow.keras</span> <span class="keyword">import</span> <span class="variable">layers</span>, <span class="variable">models</span>
+<span class="keyword">from</span> <span class="variable">tensorflow.keras.datasets</span> <span class="keyword">import</span> <span class="variable">mnist</span>
+<span class="keyword">import</span> <span class="variable">numpy</span> <span class="keyword">as</span> <span class="variable">np</span>
+<span class="keyword">import</span> <span class="variable">matplotlib.pyplot</span> <span class="keyword">as</span> <span class="variable">plt</span>
+
+<span class="comment"># Load the MNIST dataset</span>
+(<span class="variable">train_images</span>, <span class="variable">train_labels</span>), (<span class="variable">test_images</span>, <span class="variable">test_labels</span>) = <span class="function">mnist.load_data</span>()
+
+<span class="comment"># Reshape and normalize the data</span>
+<span class="variable">train_images</span> = <span class="variable">train_images</span>.<span class="function">reshape</span>((<span class="number">60000</span>, <span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)).<span class="function">astype</span>(<span class="string">'float32'</span>) / <span class="number">255</span>
+<span class="variable">test_images</span> = <span class="variable">test_images</span>.<span class="function">reshape</span>((<span class="number">10000</span>, <span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)).<span class="function">astype</span>(<span class="string">'float32'</span>) / <span class="number">255</span>
+
+<span class="comment"># Convert labels to categorical</span>
+<span class="variable">train_labels</span> = <span class="function">to_categorical</span>(<span class="variable">train_labels</span>)
+<span class="variable">test_labels</span> = <span class="function">to_categorical</span>(<span class="variable">test_labels</span>)</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h4>📊 Dataset Summary:</h4>
+                        <div class="metric-grid">
+                            <div class="metric-card">
+                                <h3>60,000</h3>
+                                <p>Training Images</p>
+                            </div>
+                            <div class="metric-card">
+                                <h3>10,000</h3>
+                                <p>Test Images</p>
+                            </div>
+                            <div class="metric-card">
+                                <h3>28×28</h3>
+                                <p>Image Size</p>
+                            </div>
+                            <div class="metric-card">
+                                <h3>10</h3>
+                                <p>Classes (0-9)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box">
+                        <h4>💡 Key Points:</h4>
+                        <p>• Images are normalized to values between 0 and 1 for better training<br>
+                        • Reshaped to include channel dimension (28, 28, 1) for CNN input<br>
+                        • Labels converted to one-hot encoding for multi-class classification</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODEL ARCHITECTURE SECTION -->
+        <div id="architecture" class="section">
+            <!-- Model Building -->
+            <div class="notebook-cell">
+                <div class="cell-header" onclick="toggleCell(this)">
+                    <span><span class="question-number">2</span>CNN Model Architecture</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="cell-content">
+                    <h3>🏗️ Building our CNN:</h3>
+                    <p>Creating a deep convolutional neural network with multiple layers for robust digit recognition.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span><i class="fas fa-code"></i> Model Architecture</span>
+                            <div>
+                                <span class="code-language">Python</span>
+                                <button class="copy-button" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+                            <pre><code><span class="variable">model</span> = <span class="function">models.Sequential</span>()
+
+<span class="comment"># Input and Convolutional Block 1</span>
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Conv2D</span>(<span class="number">32</span>, (<span class="number">3</span>, <span class="number">3</span>), <span class="variable">activation</span>=<span class="string">'relu'</span>, 
+                            <span class="variable">padding</span>=<span class="string">'same'</span>, <span class="variable">input_shape</span>=(<span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.BatchNormalization</span>())
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Conv2D</span>(<span class="number">32</span>, (<span class="number">3</span>, <span class="number">3</span>), <span class="variable">activation</span>=<span class="string">'relu'</span>, <span class="variable">padding</span>=<span class="string">'same'</span>))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.BatchNormalization</span>())
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.MaxPooling2D</span>((<span class="number">2</span>, <span class="number">2</span>)))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Dropout</span>(<span class="number">0.25</span>))
+
+<span class="comment"># Convolutional Block 2</span>
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Conv2D</span>(<span class="number">64</span>, (<span class="number">3</span>, <span class="number">3</span>), <span class="variable">activation</span>=<span class="string">'relu'</span>, <span class="variable">padding</span>=<span class="string">'same'</span>))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.BatchNormalization</span>())
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Conv2D</span>(<span class="number">64</span>, (<span class="number">3</span>, <span class="number">3</span>), <span class="variable">activation</span>=<span class="string">'relu'</span>, <span class="variable">padding</span>=<span class="string">'same'</span>))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.BatchNormalization</span>())
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.MaxPooling2D</span>((<span class="number">2</span>, <span class="number">2</span>)))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Dropout</span>(<span class="number">0.25</span>))
+
+<span class="comment"># Convolutional Block 3</span>
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Conv2D</span>(<span class="number">128</span>, (<span class="number">3</span>, <span class="number">3</span>), <span class="variable">activation</span>=<span class="string">'relu'</span>, <span class="variable">padding</span>=<span class="string">'same'</span>))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.BatchNormalization</span>())
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.GlobalAveragePooling2D</span>())
+
+<span class="comment"># Fully Connected Layer</span>
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Dense</span>(<span class="number">64</span>, <span class="variable">activation</span>=<span class="string">'relu'</span>))
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Dropout</span>(<span class="number">0.5</span>))
+
+<span class="comment"># Output Layer</span>
+<span class="variable">model</span>.<span class="function">add</span>(<span class="function">layers.Dense</span>(<span class="number">10</span>, <span class="variable">activation</span>=<span class="string">'softmax'</span>))</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="architecture-diagram">
+                        <h4>🔄 Data Flow Through Our CNN:</h4>
+                        <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; margin: 20px 0;">
+                            <div class="model-layer">Input<br>28×28×1</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">Conv2D<br>32 filters</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">MaxPool<br>2×2</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">Conv2D<br>64 filters</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">MaxPool<br>2×2</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">Conv2D<br>128 filters</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">Global Avg Pool</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">Dense<br>64 units</div>
+                            <span class="arrow">→</span>
+                            <div class="model-layer">Output<br>10 classes</div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box">
+                        <h4>🎯 Architecture Highlights:</h4>
+                        <p>• <strong>Batch Normalization:</strong> Stabilizes training and improves convergence<br>
+                        • <strong>Dropout:</strong> Prevents overfitting by randomly turning off neurons<br>
+                        • <strong>Global Average Pooling:</strong> More efficient than traditional flatten + dense<br>
+                        • <strong>Progressive filters:</strong> 32 → 64 → 128 filters for hierarchical feature learning</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRAINING SECTION -->
+        <div id="training" class="section">
+            <!-- Training Process -->
+            <div class="notebook-cell">
+                <div class="cell-header" onclick="toggleCell(this)">
+                    <span><span class="question-number">3</span>Model Training & Results</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="cell-content">
+                    <h3>🚀 Training our CNN:</h3>
+                    <p>Compiling and training the model with optimal hyperparameters for best performance.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span><i class="fas fa-code"></i> Training Configuration</span>
+                            <div>
+                                <span class="code-language">Python</span>
+                                <button class="copy-button" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+                            <pre><code><span class="comment"># Compile the model</span>
+<span class="variable">model</span>.<span class="function">compile</span>(<span class="variable">optimizer</span>=<span class="string">'adam'</span>,
+              <span class="variable">loss</span>=<span class="string">'categorical_crossentropy'</span>,
+              <span class="variable">metrics</span>=[<span class="string">'accuracy'</span>])
+
+<span class="comment"># Train the model</span>
+<span class="variable">history</span> = <span class="variable">model</span>.<span class="function">fit</span>(<span class="variable">train_images</span>, <span class="variable">train_labels</span>, 
+                    <span class="variable">epochs</span>=<span class="number">5</span>, 
+                    <span class="variable">batch_size</span>=<span class="number">64</span>, 
+                    <span class="variable">validation_split</span>=<span class="number">0.1</span>)
+
+<span class="comment"># Evaluate the model</span>
+<span class="variable">test_loss</span>, <span class="variable">test_acc</span> = <span class="variable">model</span>.<span class="function">evaluate</span>(<span class="variable">test_images</span>, <span class="variable">test_labels</span>)
+<span class="function">print</span>(<span class="string">f"Test accuracy: {test_acc}"</span>)</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h4>📈 Training Progress:</h4>
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 15px; margin: 10px 0;">
+                            <p><strong>Epoch 1/5:</strong> loss: 0.6562 - accuracy: 0.7929 - val_accuracy: 0.9843</p>
+                            <p><strong>Epoch 2/5:</strong> loss: 0.0958 - accuracy: 0.9746 - val_accuracy: 0.9915</p>
+                            <p><strong>Epoch 3/5:</strong> loss: 0.0664 - accuracy: 0.9811 - val_accuracy: 0.9903</p>
+                            <p><strong>Epoch 4/5:</strong> loss: 0.0561 - accuracy: 0.9846 - val_accuracy: 0.9902</p>
+                            <p><strong>Epoch 5/5:</strong> loss: 0.0464 - accuracy: 0.9866 - val_accuracy: 0.9920</p>
+                        </div>
+                    </div>
+
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <h3>99.17%</h3>
+                            <p>Final Test Accuracy</p>
+                        </div>
+                        <div class="metric-card">
+                            <h3>5</h3>
+                            <p>Training Epochs</p>
+                        </div>
+                        <div class="metric-card">
+                            <h3>0.0297</h3>
+                            <p>Final Test Loss</p>
+                        </div>
+                        <div class="metric-card">
+                            <h3>~2 min</h3>
+                            <p>Training Time</p>
+                        </div>
+                    </div>
+
+                    <div class="insight-box">
+                        <h4>🎉 Excellent Results!</h4>
+                        <p>Our CNN achieved <strong>99.17% test accuracy</strong> in just 5 epochs! The model shows strong performance with minimal overfitting, thanks to batch normalization and dropout regularization.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PREDICTIONS SECTION -->
+        <div id="predictions" class="section">
+            <!-- Sample Predictions -->
+            <div class="notebook-cell">
+                <div class="cell-header" onclick="toggleCell(this)">
+                    <span><span class="question-number">4</span>Model Predictions & Analysis</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="cell-content">
+                    <h3>🔍 Analyzing Model Predictions:</h3>
+                    <p>Let's look at some test images and see how well our CNN performs in practice.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span><i class="fas fa-code"></i> Making Predictions</span>
+                            <div>
+                                <span class="code-language">Python</span>
+                                <button class="copy-button" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+                            <pre><code><span class="comment"># Make predictions on test set</span>
+<span class="variable">predictions</span> = <span class="variable">model</span>.<span class="function">predict</span>(<span class="variable">test_images</span>)
+
+<span class="comment"># Display sample predictions</span>
+<span class="variable">num_images</span> = <span class="number">10</span>
+<span class="variable">random_indices</span> = <span class="variable">np</span>.<span class="variable">random</span>.<span class="function">choice</span>(<span class="variable">test_images</span>.<span class="variable">shape</span>[<span class="number">0</span>], <span class="variable">num_images</span>, <span class="variable">replace</span>=<span class="keyword">False</span>)
+
+<span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">num_images</span>):
+    <span class="variable">true_label</span> = <span class="variable">np</span>.<span class="function">argmax</span>(<span class="variable">test_labels</span>[<span class="variable">random_indices</span>[<span class="variable">i</span>]])
+    <span class="variable">predicted_label</span> = <span class="variable">np</span>.<span class="function">argmax</span>(<span class="variable">predictions</span>[<span class="variable">random_indices</span>[<span class="variable">i</span>]])
+    <span class="function">print</span>(<span class="string">f"True: {true_label}, Predicted: {predicted_label}"</span>)</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h4>🎯 Sample Predictions:</h4>
+                        <div class="image-grid">
+                            <div class="digit-image prediction-correct">
+                                <div>7<br><small>Pred: 7 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>2<br><small>Pred: 2 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>1<br><small>Pred: 1 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-wrong">
+                                <div>0<br><small>Pred: 6 ✗</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>4<br><small>Pred: 4 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>1<br><small>Pred: 1 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>4<br><small>Pred: 4 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>9<br><small>Pred: 9 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>5<br><small>Pred: 5 ✓</small></div>
+                            </div>
+                            <div class="digit-image prediction-correct">
+                                <div>9<br><small>Pred: 9 ✓</small></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box">
+                        <h4>📊 Key Observations:</h4>
+                        <p>• Most predictions are correct (green boxes)<br>
+                        • Occasional mistakes happen with ambiguous handwriting<br>
+                        • The model shows high confidence on clear, well-written digits<br>
+                        • Even wrong predictions are often understandable (e.g., 0 predicted as 6)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Visualization -->
+            <div class="notebook-cell">
+                <div class="cell-header" onclick="toggleCell(this)">
+                    <span><span class="question-number">5</span>CNN Feature Visualization</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="cell-content">
+                    <h3>🔍 What Does Our CNN See?</h3>
+                    <p>Visualizing the features learned by the first convolutional layer to understand how the CNN processes images.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span><i class="fas fa-code"></i> Feature Visualization</span>
+                            <div>
+                                <span class="code-language">Python</span>
+                                <button class="copy-button" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-content">
+                            <pre><code><span class="keyword">from</span> <span class="variable">tensorflow.keras.models</span> <span class="keyword">import</span> <span class="variable">Model</span>
+
+<span class="comment"># Create activation model to see what layers learn</span>
+<span class="variable">layer_outputs</span> = [<span class="variable">layer</span>.<span class="variable">output</span> <span class="keyword">for</span> <span class="variable">layer</span> <span class="keyword">in</span> <span class="variable">model</span>.<span class="variable">layers</span>[:<span class="number">2</span>]]
+<span class="variable">activation_model</span> = <span class="function">Model</span>(<span class="variable">inputs</span>=<span class="variable">model</span>.<span class="variable">input</span>, <span class="variable">outputs</span>=<span class="variable">layer_outputs</span>)
+
+<span class="comment"># Visualize activations for a sample image</span>
+<span class="variable">sample_image</span> = <span class="variable">test_images</span>[<span class="number">0</span>].<span class="function">reshape</span>(<span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)
+<span class="variable">activations</span> = <span class="variable">activation_model</span>.<span class="function">predict</span>(<span class="variable">sample_image</span>)
+
+<span class="function">print</span>(<span class="string">f"First layer activation shape: {activations[1].shape}"</span>)
+<span class="comment"># Shape: (1, 28, 28, 32) - 32 different feature maps!</span></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h4>🧠 What the CNN Learned:</h4>
+                        <p style="margin: 10px 0;"><strong>First Convolutional Layer Output:</strong> (1, 28, 28, 32)</p>
+                        <p>This means our CNN created <strong>32 different feature maps</strong>, each highlighting different aspects of the input image like:</p>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>🔴 Horizontal edges</li>
+                            <li>🔵 Vertical edges</li>
+                            <li>🟢 Diagonal patterns</li>
+                            <li>🟡 Curves and corners</li>
+                            <li>🟣 Various textures and shapes</li>
+                        </ul>
+                    </div>
+
+                    <div class="insight-box">
+                        <h4>🎯 The Beauty of CNNs:</h4>
+                        <p>Each filter in our CNN automatically learned to detect specific patterns! The first layer detects simple edges and shapes, while deeper layers combine these to recognize complex digit patterns. This hierarchical learning is what makes CNNs so powerful for image recognition.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for interactive functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav pills
+            const navPills = document.querySelectorAll('.nav-pill');
+            navPills.forEach(pill => pill.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function toggleCell(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('i');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                header.classList.remove('expanded');
+            } else {
+                content.classList.add('active');
+                header.classList.add('expanded');
+            }
+        }
+
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        // Auto-expand first cell in each section
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCells = document.querySelectorAll('.section .notebook-cell:first-child .cell-header');
+            firstCells.forEach(header => {
+                toggleCell(header);
+            });
+        });
+    </script>
+</body>
+</html>
