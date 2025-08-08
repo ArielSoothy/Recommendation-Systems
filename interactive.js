@@ -27,11 +27,11 @@ function createSparsityMatrix() {
     const container = document.createElement('div');
     container.innerHTML = `
         <div style="text-align: center; margin: 20px 0;">
-            <div id="interactive-matrix" style="display: inline-grid; grid-template-columns: repeat(15, 1fr); gap: 2px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <div id="interactive-matrix" style="display: inline-grid; grid-template-columns: repeat(15, 1fr); gap: 2px; padding: 15px; background: var(--header-bg); border-radius: 8px; border: 1px solid var(--border); color: var(--text);">
                 <!-- Matrix cells will be generated -->
             </div>
             <br>
-            <button onclick="regenerateMatrix()" style="margin-top: 15px; background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            <button onclick="regenerateMatrix()" style="margin-top: 15px; background: var(--accent); color: white; border: 1px solid var(--border); padding: 10px 20px; border-radius: 10px; cursor: pointer;">
                 🔄 Generate New Matrix
             </button>
         </div>
@@ -71,8 +71,8 @@ function generateMatrixCells() {
             cell.style.color = 'white';
             cell.title = `Rating: ${rating} stars`;
         } else {
-            cell.style.background = '#e9ecef';
-            cell.style.border = '1px solid #dee2e6';
+            cell.style.background = 'var(--header-bg)';
+            cell.style.border = '1px solid var(--border)';
             cell.title = 'No rating';
         }
         
@@ -118,8 +118,8 @@ function regenerateMatrix() {
                     cell.title = `Rating: ${rating} stars`;
                 } else {
                     cell.textContent = '';
-                    cell.style.background = '#e9ecef';
-                    cell.style.border = '1px solid #dee2e6';
+                    cell.style.background = 'var(--header-bg)';
+                    cell.style.border = '1px solid var(--border)';
                     cell.title = 'No rating';
                 }
                 cell.style.transform = 'scale(1)';
@@ -284,10 +284,10 @@ function setupProgressTracking() {
     // Override the showSection function to track progress
     const originalShowSection = window.showSection;
     if (originalShowSection) {
-        window.showSection = function(sectionId) {
+        window.showSection = function(sectionId, pillEl) {
             visitedSections.add(sectionId);
             updateProgressBar(visitedSections.size, totalSections);
-            originalShowSection(sectionId);
+            originalShowSection(sectionId, pillEl);
         };
     }
     

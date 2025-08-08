@@ -15,14 +15,8 @@
     }
 }
 
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
+/* Subtle pulse removed for a more professional look */
+@keyframes pulse { 0%,100%{transform:none;} 50%{transform:none;} }
 
 @keyframes slideInLeft {
     from {
@@ -111,21 +105,18 @@
 }
 
 .matrix-block {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #ffffff;
+    color: #1d1d1f;
     padding: 20px;
-    border-radius: 15px;
+    border-radius: 12px;
     text-align: center;
     min-width: 120px;
-    animation: fadeInUp 0.6s ease;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    animation: fadeInUp 0.4s ease;
+    border: 1px solid #e5e5ea;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
-.matrix-arrow {
-    font-size: 2em;
-    color: #667eea;
-    animation: pulse 2s infinite;
-}
+.matrix-arrow { font-size: 2em; color: #0a84ff; }
 
 /* KNN visualization */
 .knn-neighbors {
@@ -145,8 +136,8 @@
 }
 
 .neighbor-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
 
 /* Rating stars */
@@ -156,10 +147,7 @@
     margin: 5px 0;
 }
 
-.star {
-    color: #fbbf24;
-    transition: all 0.2s ease;
-}
+.star { color: #ffcc00; transition: all 0.2s ease; }
 
 .star:hover {
     transform: scale(1.2);
@@ -230,15 +218,7 @@
     overflow: hidden;
 }
 
-.algorithm-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ff6b6b 0%, #4ecdc4 100%);
-}
+.algorithm-card::before { display: none; }
 
 .algorithm-card:hover {
     transform: translateY(-10px);
@@ -264,12 +244,7 @@
     min-width: 100px;
 }
 
-.metric-value {
-    font-size: 2em;
-    font-weight: bold;
-    color: #667eea;
-    margin-bottom: 5px;
-}
+.metric-value { font-size: 2em; font-weight: 600; color: #1d1d1f; margin-bottom: 5px; }
 
 .metric-label {
     color: #6b7280;
@@ -278,22 +253,19 @@
 
 /* Interactive buttons */
 .interactive-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #0a84ff;
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transition: background 0.2s ease;
+    box-shadow: 0 6px 16px rgba(10, 132, 255, 0.18);
 }
 
-.interactive-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-}
+.interactive-button:hover { background: #0071e3; }
 
 .interactive-button:active {
     transform: translateY(0);
@@ -343,19 +315,11 @@
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-    .algorithm-card {
-        background: #1f2937;
-        color: #f9fafb;
-    }
+  .algorithm-card { background: #1c1c1e; color: #f9f9fb; }
     
-    .metric-display {
-        background: #374151;
-        color: #f9fafb;
-    }
+  .metric-display { background: #2c2c2e; color: #f9f9fb; }
     
-    .matrix-visualization {
-        background: #374151;
-    }
+  .matrix-visualization { background: #2c2c2e; }
 }
 
 /* Print styles */

@@ -1,0 +1,3 @@
+This notebook is part of google reichman course. it was meant for google collab hut we will modify it to run it locally here on the m2max.
+we shold have a kernel with ai pckages that we use on different projects so check that we use the correct one instead of reinstalling again and again.
+use best practices on this project on all aspects.
