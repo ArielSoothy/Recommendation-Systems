@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +7,15 @@
         <meta property="og:title" content="Recommendation Systems Explorer | Interactive Learning Experience">
         <meta property="og:description" content="Learn recommendation systems from zero with interactive visualizations and code examples (SVD, KNN, EASE) on MovieLens 100K.">
         <meta property="og:type" content="website">
-        <meta property="og:image" content="https://user-images.githubusercontent.com/og-default-card.png">
-        <meta name="theme-color" content="#667eea">
+        <meta property="og:image" content="https://arielsoothy.github.io/Recommendation-Systems/preview-image.png">
+        <meta property="og:url" content="https://arielsoothy.github.io/Recommendation-Systems/">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Recommendation Systems Explorer | Interactive Learning">
+        <meta name="twitter:description" content="Master recommendation algorithms with interactive visualizations: SVD, KNN, EASE on MovieLens data">
+        <meta name="author" content="Ariel Soothy">
+        <meta name="keywords" content="recommendation systems, machine learning, collaborative filtering, SVD, KNN, EASE, data science, interactive learning, portfolio">
+        <link rel="canonical" href="https://arielsoothy.github.io/Recommendation-Systems/">
+        <meta name="theme-color" content="#1c1c1e">
     <title>Recommendation Systems Explorer | Interactive Learning Experience</title>
     <link rel="stylesheet" href="styles.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -471,14 +478,21 @@
     <div class="notebook-container" role="main">
         <!-- Project Header -->
         <div class="project-header">
-            <button class="theme-toggle" id="theme-toggle" aria-pressed="false">
+            <button class="theme-toggle" id="theme-toggle" aria-pressed="true">
                 <span aria-hidden="true">🌓</span>
-                <span id="theme-label">Dark mode</span>
+                <span id="theme-label">Light mode</span>
                 <span class="sr-only">Toggle color theme</span>
             </button>
             <h1>🎯 Recommendation Systems Explorer</h1>
             <p><strong>Learn:</strong> Collaborative Filtering, SVD, KNN, EASE | <strong>Dataset:</strong> MovieLens 100K</p>
             <p>Interactive Journey Through Modern Recommendation Algorithms</p>
+            <div class="portfolio-badge" style="margin-top: 20px; font-size: 0.9em; color: var(--secondary-text);">
+                <span>📚 Part of Google/Reichman AI & Deep Learning Course Portfolio</span> | 
+                <span>👨‍💻 By <strong>Ariel Soothy</strong></span> | 
+                <a href="https://github.com/ArielSoothy/Recommendation-Systems" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none;">
+                    <i class="fab fa-github"></i> Source Code
+                </a>
+            </div>
         </div>
 
         <!-- Navigation Pills -->
@@ -1266,15 +1280,26 @@
 
         // Auto-expand first cell in each section and add keyboard accessibility
         document.addEventListener('DOMContentLoaded', function() {
-            // Theme toggle: persist in localStorage
+            // Theme toggle: persist in localStorage, default to dark mode
             const root = document.documentElement;
             const toggleBtn = document.getElementById('theme-toggle');
             const label = document.getElementById('theme-label');
             const storedTheme = localStorage.getItem('theme');
-            if (storedTheme === 'dark') {
+            
+            // Default to dark mode if no preference is stored
+            if (storedTheme === 'light') {
+                // User explicitly chose light mode
+                root.removeAttribute('data-theme');
+                toggleBtn.setAttribute('aria-pressed', 'false');
+                label.textContent = 'Dark mode';
+            } else {
+                // Default to dark mode (either stored 'dark' or no preference)
                 root.setAttribute('data-theme', 'dark');
                 toggleBtn.setAttribute('aria-pressed', 'true');
                 label.textContent = 'Light mode';
+                if (!storedTheme) {
+                    localStorage.setItem('theme', 'dark');
+                }
             }
             toggleBtn?.addEventListener('click', () => {
                 const isDark = root.getAttribute('data-theme') === 'dark';
@@ -1343,5 +1368,35 @@
             }
         });
     </script>
+
+    <!-- Professional Portfolio Footer -->
+    <footer style="margin-top: 60px; padding: 40px 20px; text-align: center; border-top: 1px solid var(--border); background: var(--header-bg);">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h3 style="color: var(--text); margin: 0 0 20px 0;">About This Project</h3>
+            <p style="color: var(--secondary-text); margin: 0 0 20px 0; line-height: 1.6;">
+                This interactive recommendation systems explorer demonstrates advanced web development skills and 
+                educational design principles. Built as part of the Google/Reichman University AI & Deep Learning course portfolio.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 30px; margin: 25px 0; flex-wrap: wrap;">
+                <a href="https://github.com/ArielSoothy/Recommendation-Systems" target="_blank" rel="noopener" 
+                   style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                    <i class="fab fa-github"></i> Source Code
+                </a>
+                <a href="https://linkedin.com/in/ariel-soothy" target="_blank" rel="noopener" 
+                   style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                    <i class="fab fa-linkedin"></i> LinkedIn Profile
+                </a>
+                                  <a href="https://github.com/ArielSoothy" target="_blank" rel="noopener"
+                     style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                      <i class="fab fa-github"></i> GitHub Profile
+                  </a>
+            </div>
+            <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 25px;">
+                <p style="margin: 0;">© 2024 Ariel Soothy | Data Engineer at Nuvei | AI & Deep Learning Student</p>
+                <p style="margin: 5px 0 0 0;">Built with HTML5, CSS3, JavaScript | Deployed on GitHub Pages</p>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html> 

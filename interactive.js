@@ -2,7 +2,7 @@
 
 // Initialize when DOM loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Recommendation Systems Explorer loaded!');
+    // Recommendation Systems Explorer initialized
     setupInteractiveFeatures();
     setupProgressTracking();
 });
