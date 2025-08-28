@@ -359,14 +359,16 @@
         .visualization-container span {
             color: var(--text) !important;
         }
+        
+        /* Override for model comparison cards to preserve their inline styles */
+        #model-comparison,
+        #model-comparison * {
+            color: initial !important;
+        }
+        
         /* Force inline bright backgrounds/borders inside visualization containers to theme-aware in dark mode */
         [data-theme="dark"] .visualization-container [style*="background: #fff"],
-        [data-theme="dark"] .visualization-container [style*="background: white"],
-        [data-theme="dark"] .visualization-container [style*="background: #f0"],
-        [data-theme="dark"] .visualization-container [style*="background: #e0"],
-        [data-theme="dark"] .visualization-container [style*="background: #fe"],
-        [data-theme="dark"] .visualization-container [style*="background: #ff"],
-        [data-theme="dark"] .visualization-container [style*="background: #d"] {
+        [data-theme="dark"] .visualization-container [style*="background: white"] {
             background: var(--card-bg) !important;
             color: var(--text) !important;
             border-color: var(--border) !important;
