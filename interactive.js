@@ -227,36 +227,36 @@ function setupAlgorithmComparison() {
         comparisonDiv.innerHTML = `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                 <div style="background: #e0e7ff; padding: 20px; border-radius: 15px; text-align: center; transition: transform 0.3s;">
-                    <h5 style="color: #3730a3; margin-top: 0;">🥇 SVD</h5>
-                    <div style="font-size: 1.5em; font-weight: bold; color: #667eea;">0.6757</div>
-                    <div style="color: #6b7280;">RMSE Score</div>
-                    <div style="margin: 10px 0;">
+                    <h5 style="color: #1e1b4b; margin-top: 0;">🥇 SVD</h5>
+                    <div style="font-size: 1.5em; font-weight: bold; color: #4338ca;">0.6757</div>
+                    <div style="color: #374151;">RMSE Score</div>
+                    <div style="margin: 10px 0; color: #374151;">
                         <div>Speed: ⚡⚡⚡⚡⚡</div>
                         <div>Accuracy: ⭐⭐⭐⭐⭐</div>
                     </div>
-                    <div style="font-size: 0.9em; color: #059669;">✨ Best Overall</div>
+                    <div style="font-size: 0.9em; color: #059669; font-weight: 600;">✨ Best Overall</div>
                 </div>
                 
-                <div style="background: #f0fdfa; padding: 20px; border-radius: 15px; text-align: center; transition: transform 0.3s;">
-                    <h5 style="color: #065f46; margin-top: 0;">🥈 EASE</h5>
-                    <div style="font-size: 1.5em; font-weight: bold; color: #4ecdc4;">0.7234</div>
-                    <div style="color: #6b7280;">RMSE Score</div>
-                    <div style="margin: 10px 0;">
+                <div style="background: #d1fae5; padding: 20px; border-radius: 15px; text-align: center; transition: transform 0.3s;">
+                    <h5 style="color: #064e3b; margin-top: 0;">🥈 EASE</h5>
+                    <div style="font-size: 1.5em; font-weight: bold; color: #047857;">0.7234</div>
+                    <div style="color: #374151;">RMSE Score</div>
+                    <div style="margin: 10px 0; color: #374151;">
                         <div>Speed: ⚡⚡⚡⚡</div>
                         <div>Simplicity: ⭐⭐⭐⭐⭐</div>
                     </div>
-                    <div style="font-size: 0.9em; color: #059669;">✨ Easiest to Implement</div>
+                    <div style="font-size: 0.9em; color: #047857; font-weight: 600;">✨ Easiest to Implement</div>
                 </div>
                 
                 <div style="background: #fef3c7; padding: 20px; border-radius: 15px; text-align: center; transition: transform 0.3s;">
-                    <h5 style="color: #92400e; margin-top: 0;">🥉 KNN</h5>
-                    <div style="font-size: 1.5em; font-weight: bold; color: #f59e0b;">0.8887</div>
-                    <div style="color: #6b7280;">RMSE Score</div>
-                    <div style="margin: 10px 0;">
+                    <h5 style="color: #78350f; margin-top: 0;">🥉 KNN</h5>
+                    <div style="font-size: 1.5em; font-weight: bold; color: #d97706;">0.8887</div>
+                    <div style="color: #374151;">RMSE Score</div>
+                    <div style="margin: 10px 0; color: #374151;">
                         <div>Speed: ⚡⚡</div>
                         <div>Interpretability: ⭐⭐⭐⭐⭐</div>
                     </div>
-                    <div style="font-size: 0.9em; color: #059669;">✨ Most Explainable</div>
+                    <div style="font-size: 0.9em; color: #d97706; font-weight: 600;">✨ Most Explainable</div>
                 </div>
             </div>
         `;
