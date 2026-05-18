@@ -175,9 +175,14 @@
       </div>
 
       <div class="grid grid--3 reveal mt-3">
-        <div class="metric"><div class="metric__label">EASE (from scratch)</div><div class="metric__value">0.7234 <span class="metric__unit">RMSE</span></div><div class="metric__note">Lucky-split number; CV not run for EASE due to runtime.</div></div>
-        <div class="metric"><div class="metric__label">KNN-baseline</div><div class="metric__value">0.8887 <span class="metric__unit">RMSE</span></div><div class="metric__sub">MAE 0.6891</div></div>
+        <div class="metric"><div class="metric__label">KNN-baseline · single split</div><div class="metric__value">0.8887 <span class="metric__unit">RMSE</span></div><div class="metric__sub">MAE 0.6891</div></div>
+        <div class="metric"><div class="metric__label">KNN · 5-fold CV</div><div class="metric__value">0.9746 <span class="metric__unit">RMSE</span></div><div class="metric__sub">MAE 0.7652 (± 0.003)</div></div>
         <div class="metric metric--baseline"><div class="metric__label">Reference baseline</div><div class="metric__value">~0.93 <span class="metric__unit">RMSE</span></div><div class="metric__note">Typical MovieLens-100K SVD result reported in the literature.</div></div>
+      </div>
+
+      <div class="card reveal mt-3">
+        <h3 class="card__title">EASE (from-scratch implementation)</h3>
+        <p class="card__body">EASE was implemented from scratch following <a href="https://arxiv.org/abs/1905.03375" target="_blank" rel="noopener">Steck 2019</a> — closed-form item-item solution with λ-regularized Gram inverse and the critical <span class="mono">diag(B) = 0</span> step (so items can't recommend themselves). Trained on the <strong>implicit-feedback</strong> version of MovieLens-100K (all positive ratings → 1), which is the formulation the paper actually uses, so RMSE on explicit ratings isn't the right metric here. The notebook validates EASE by inspecting recommended items per user; the similarity matrix has 99.94% non-zero density and prediction scores in [-0.47, 1.35]. A proper hit-rate / NDCG@K evaluation would be the honest benchmark — that's on the "needs work" list.</p>
       </div>
     </div>
   </section>
