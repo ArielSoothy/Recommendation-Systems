@@ -1,1404 +1,294 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Interactive Recommendation Systems Explorer: learn collaborative filtering, SVD, KNN, EASE with hands-on, visual demos using MovieLens 100K.">
-        <meta property="og:title" content="Recommendation Systems Explorer | Interactive Learning Experience">
-        <meta property="og:description" content="Learn recommendation systems from zero with interactive visualizations and code examples (SVD, KNN, EASE) on MovieLens 100K.">
-        <meta property="og:type" content="website">
-        <meta property="og:image" content="https://arielsoothy.github.io/Recommendation-Systems/preview-image.png">
-        <meta property="og:url" content="https://arielsoothy.github.io/Recommendation-Systems/">
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Recommendation Systems Explorer | Interactive Learning">
-        <meta name="twitter:description" content="Master recommendation algorithms with interactive visualizations: SVD, KNN, EASE on MovieLens data">
-        <meta name="author" content="Ariel Soothy">
-        <meta name="keywords" content="recommendation systems, machine learning, collaborative filtering, SVD, KNN, EASE, data science, interactive learning, portfolio">
-        <link rel="canonical" href="https://arielsoothy.github.io/Recommendation-Systems/">
-        <meta name="theme-color" content="#1c1c1e">
-    <title>Recommendation Systems Explorer | Interactive Learning Experience</title>
-    <link rel="stylesheet" href="styles.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js" defer></script>
-    <script src="interactive.js?v=2" defer></script>
-    <style>
-        :root {
-            --bg: #f5f5f7;
-            --text: #1d1d1f;
-            --secondary-text: #3a3a3c;
-            --card-bg: #ffffff;
-            --border: #e5e5ea;
-            --header-bg: #f2f2f7;
-            --code-bg: #f5f5f7;
-            --accent: #0a84ff;
-            --accent-hover: #0071e3;
-            --shadow: rgba(0,0,0,0.08);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recommendation Systems — Ariel Soothy</title>
+  <meta name="description" content="MovieLens-100K recommendation systems: SVD, KNN, and EASE implementations with honest evaluation. Part of the Google × Reichman AI & Deep Learning Course portfolio." />
+  <meta property="og:title" content="Recommendation Systems — Ariel Soothy" />
+  <meta property="og:description" content="SVD, KNN, EASE on MovieLens 100K. Honest cross-validation results, from-scratch implementations, interactive demos." />
+  <meta property="og:url" content="https://arielsoothy.github.io/Recommendation-Systems/" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0b0f19" />
+  <link rel="canonical" href="https://arielsoothy.github.io/Recommendation-Systems/" />
 
-        [data-theme="dark"] {
-            --bg: #1c1c1e;
-            --text: #f5f5f7;
-            --secondary-text: #d1d1d6;
-            --card-bg: #2c2c2e;
-            --border: #3a3a3c;
-            --header-bg: #2c2c2e;
-            --code-bg: #2c2c2e;
-            --accent: #0a84ff;
-            --accent-hover: #4aa3ff;
-            --shadow: rgba(0,0,0,0.35);
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-        /* Base Styles */
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: var(--bg);
-            min-height: 100vh;
-            color: var(--text);
-        }
+  <link rel="stylesheet" href="portfolio-theme.css" />
+  <link rel="stylesheet" href="styles.css" />
 
-        .notebook-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header Styles */
-        .project-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .project-header h1 {
-            font-size: 3em;
-            margin: 0;
-            color: var(--text);
-            letter-spacing: -0.02em;
-        }
-
-        .project-header p {
-            font-size: 1.1em;
-            margin: 10px 0;
-            color: var(--secondary-text);
-        }
-
-        /* Navigation Pills */
-        .nav-pills {
-            display: flex;
-            justify-content: center;
-            margin: 30px 0;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .nav-pill {
-            background: var(--card-bg);
-            color: var(--text);
-            padding: 10px 18px;
-            border-radius: 22px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid var(--border);
-            font-weight: 500;
-        }
-
-        .nav-pill:hover {
-            background: var(--header-bg);
-        }
-
-        .nav-pill.active {
-            background: var(--accent);
-            color: #ffffff;
-            border-color: var(--accent);
-            box-shadow: 0 6px 16px rgba(10, 132, 255, 0.18);
-        }
-
-        /* Section Management */
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        /* Notebook Cell Styles */
-        .notebook-cell {
-            background: var(--card-bg);
-            margin: 20px 0;
-            border-radius: 14px;
-            box-shadow: 0 1px 3px var(--shadow);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: transform 0.2s ease;
-        }
-
-        .notebook-cell:hover {
-            transform: translateY(-2px);
-        }
-
-        .cell-header {
-            background: var(--header-bg);
-            color: var(--text);
-            padding: 15px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s ease;
-        }
-
-        .cell-header:hover {
-            background: var(--border);
-        }
-
-        .cell-header i {
-            transition: transform 0.3s ease;
-        }
-
-        .cell-header.expanded i {
-            transform: rotate(180deg);
-        }
-
-        .cell-content {
-            padding: 20px;
-            display: none;
-            animation: slideDown 0.3s ease;
-        }
-
-        .cell-content.active {
-            display: block;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .question-number {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            color: white;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        /* Code Block Styles */
-        .code-block {
-            background: var(--code-bg);
-            color: var(--text);
-            border-radius: 12px;
-            margin: 20px 0;
-            overflow: hidden;
-            font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            box-shadow: 0 1px 3px var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .code-header {
-            background: var(--header-bg);
-            color: var(--text);
-            padding: 10px 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .code-language {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .copy-button {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 4px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8em;
-            transition: background 0.2s ease;
-        }
-
-        .copy-button:hover {
-            background: var(--header-bg);
-        }
-
-        .code-content {
-            padding: 20px;
-            overflow-x: auto;
-            line-height: 1.7;
-            background: var(--code-bg);
-        }
-
-        .code-content pre {
-            margin: 0;
-            padding: 0;
-            background: none;
-            border: none;
-            font-size: 0.95em;
-        }
-
-        /* Syntax highlighting */
-        .keyword { color: var(--accent); font-weight: 600; }
-        .string { color: var(--secondary-text); }
-        .comment { color: #8e8e93; font-style: italic; }
-        .function { color: var(--accent); }
-        .variable { color: var(--secondary-text); }
-        .number { color: var(--secondary-text); }
-
-        /* Result and Metric Boxes */
-        .result-box {
-            background: var(--card-bg);
-            color: var(--text);
-            border-radius: 10px;
-            padding: 16px;
-            margin: 15px 0;
-            border: 1px solid var(--border);
-        }
-
-        .metric-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .metric-card {
-            background: var(--card-bg);
-            color: var(--text);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            transition: transform 0.2s ease;
-            border: 1px solid var(--border);
-        }
-
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-
-        .metric-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 2em;
-        }
-
-        .metric-card p {
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .insight-box {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            border-left: 4px solid var(--accent);
-            border: 1px solid var(--border);
-        }
-
-        .insight-box h4 {
-            margin: 0 0 10px 0;
-            color: var(--text);
-        }
-
-        .insight-box p {
-            margin: 0;
-            color: var(--secondary-text);
-        }
-
-        /* Chart and Visualization Containers */
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin: 20px 0;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 1px 3px var(--shadow);
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        .visualization-container {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 1px 3px var(--shadow);
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-        /* Ensure nested inline-colored text remains legible in dark mode */
-        .visualization-container h1,
-        .visualization-container h2,
-        .visualization-container h3,
-        .visualization-container h4,
-        .visualization-container h5,
-        .visualization-container h6,
-        .visualization-container p,
-        .visualization-container div,
-        .visualization-container span {
-            color: var(--text) !important;
-        }
-        
-        /* Override for model comparison cards to preserve their inline styles */
-        #model-comparison,
-        #model-comparison * {
-            color: initial !important;
-        }
-        
-        /* Force inline bright backgrounds/borders inside visualization containers to theme-aware in dark mode */
-        [data-theme="dark"] .visualization-container [style*="background: #fff"],
-        [data-theme="dark"] .visualization-container [style*="background: white"] {
-            background: var(--card-bg) !important;
-            color: var(--text) !important;
-            border-color: var(--border) !important;
-        }
-
-        /* Interactive Elements */
-        .interactive-matrix {
-            display: grid;
-            gap: 2px;
-            margin: 20px 0;
-            background: var(--header-bg);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .matrix-cell {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8em;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .matrix-cell:hover {
-            transform: scale(1.12);
-            z-index: 10;
-            box-shadow: 0 4px 8px var(--shadow);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-pills {
-                flex-direction: column;
-            }
-            
-            .project-header h1 {
-                font-size: 2em;
-            }
-
-            .metric-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Term Definition Styles */
-        .term-definition {
-            background: var(--card-bg);
-            border-left: 4px solid var(--accent);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-            position: relative;
-            border: 1px solid var(--border);
-        }
-
-        .term-definition h5 {
-            margin: 0 0 8px 0;
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        .term-definition p {
-            margin: 0;
-            color: var(--secondary-text);
-        }
-
-        .term-definition::before { display: none; }
-
-        /* Theme toggle */
-        .theme-toggle {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: var(--card-bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 9999px;
-            padding: 8px 10px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .theme-toggle:hover { background: var(--header-bg); }
-        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-        /* Callouts (theme-aware) */
-        .callout {
-            background: var(--header-bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--accent);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        .callout-success { border-left-color: var(--accent); }
-
-        /* Neutralize inline colorful borders */
-        [style*="border: 2px solid"] { border-color: var(--border) !important; }
-    </style>
+  <script src="portfolio.js" defer></script>
+  <script src="interactive.js?v=3" defer></script>
 </head>
-<body>
-    <a href="#introduction" class="visually-hidden-focusable" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
-    <div class="notebook-container" role="main">
-        <!-- Project Header -->
-        <div class="project-header">
-            <button class="theme-toggle" id="theme-toggle" aria-pressed="true">
-                <span aria-hidden="true">🌓</span>
-                <span id="theme-label">Light mode</span>
-                <span class="sr-only">Toggle color theme</span>
-            </button>
-            <h1>🎯 Recommendation Systems Explorer</h1>
-            <p><strong>Learn:</strong> Collaborative Filtering, SVD, KNN, EASE | <strong>Dataset:</strong> MovieLens 100K</p>
-            <p>Interactive Journey Through Modern Recommendation Algorithms</p>
-            <div class="portfolio-badge" style="margin-top: 20px; font-size: 0.9em; color: var(--secondary-text);">
-                <span>📚 Part of Google/Reichman AI & Deep Learning Course Portfolio</span> | 
-                <span>👨‍💻 By <strong>Ariel Soothy</strong></span> | 
-                <a href="https://github.com/ArielSoothy/Recommendation-Systems" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none;">
-                    <i class="fab fa-github"></i> Source Code
-                </a>
-            </div>
-        </div>
+<body data-project="recsys">
 
-        <!-- Navigation Pills -->
-        <div class="nav-pills" role="tablist">
-            <div id="tab-introduction" class="nav-pill active" role="tab" aria-selected="true" aria-controls="introduction" tabindex="0" onclick="showSection('introduction', this)" onkeydown="if(event.key==='Enter'||event.key===' '){showSection('introduction', this)}">
-                <i class="fas fa-rocket"></i> Introduction
-            </div>
-            <div id="tab-data-exploration" class="nav-pill" role="tab" aria-selected="false" aria-controls="data-exploration" tabindex="0" onclick="showSection('data-exploration', this)" onkeydown="if(event.key==='Enter'||event.key===' '){showSection('data-exploration', this)}">
-                <i class="fas fa-database"></i> Data & Sparsity
-            </div>
-            <div id="tab-collaborative-filtering" class="nav-pill" role="tab" aria-selected="false" aria-controls="collaborative-filtering" tabindex="0" onclick="showSection('collaborative-filtering', this)" onkeydown="if(event.key==='Enter'||event.key===' '){showSection('collaborative-filtering', this)}">
-                <i class="fas fa-users"></i> Collaborative Filtering
-            </div>
-            <div id="tab-algorithms" class="nav-pill" role="tab" aria-selected="false" aria-controls="algorithms" tabindex="0" onclick="showSection('algorithms', this)" onkeydown="if(event.key==='Enter'||event.key===' '){showSection('algorithms', this)}">
-                <i class="fas fa-brain"></i> SVD & KNN Algorithms
-            </div>
-            <div id="tab-advanced" class="nav-pill" role="tab" aria-selected="false" aria-controls="advanced" tabindex="0" onclick="showSection('advanced', this)" onkeydown="if(event.key==='Enter'||event.key===' '){showSection('advanced', this)}">
-                <i class="fas fa-cogs"></i> Advanced Topics
-            </div>
-            <div id="tab-hands-on" class="nav-pill" role="tab" aria-selected="false" aria-controls="hands-on" tabindex="0" onclick="showSection('hands-on', this)" onkeydown="if(event.key==='Enter'||event.key===' '){showSection('hands-on', this)}">
-                <i class="fas fa-code"></i> Hands-on Examples
-            </div>
-        </div>
-
-        <!-- INTRODUCTION SECTION -->
-        <div id="introduction" class="section active" role="tabpanel" aria-labelledby="tab-introduction" aria-hidden="false">
-            <!-- What are Recommendation Systems -->
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">1</span>What are Recommendation Systems?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🎯 Welcome to the World of Recommendations!</h3>
-                    <p>Every day, you interact with recommendation systems without even realizing it. When Netflix suggests your next binge-watch, when Amazon shows you products you might like, or when Spotify creates your Discover Weekly playlist - that's the magic of recommendation systems at work!</p>
-                    
-                    <div class="term-definition">
-                        <h5>Recommendation System</h5>
-                        <p>A tool that suggests items (movies, products, songs, etc.) to users based on their preferences, behavior, or similarity to other users. It's like having a personal shopping assistant who knows exactly what you like!</p>
-                    </div>
-
-                    <div class="visualization-container">
-                        <h4>🌟 Real-World Examples:</h4>
-                        <div class="metric-grid">
-                            <div class="metric-card">
-                                <h3>🎬</h3>
-                                <p><strong>Netflix</strong><br>Movie & TV Show Recommendations</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>🛒</h3>
-                                <p><strong>Amazon</strong><br>Product Recommendations</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>🎵</h3>
-                                <p><strong>Spotify</strong><br>Music Discovery</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>📱</h3>
-                                <p><strong>TikTok</strong><br>Video Content Curation</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>🚀 Why Do They Matter?</h4>
-                        <p>• <strong>For Users:</strong> Discover new content you'll love without endless searching<br>
-                        • <strong>For Businesses:</strong> Increase sales, engagement, and customer satisfaction<br>
-                        • <strong>For Society:</strong> Help people find relevant information in our data-rich world</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Types of Recommendation Systems -->
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">2</span>Types of Recommendation Systems</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🔍 Three Main Approaches to Recommendations</h3>
-                    <p>There are three primary ways to build recommendation systems, each with its own strengths and use cases.</p>
-                    
-                    <div class="visualization-container">
-                        <div style="display: grid; gap: 20px; margin: 20px 0;">
-                            <div style="border: 2px solid #667eea; border-radius: 10px; padding: 20px;">
-                                <h4 style="color: #667eea; margin-top: 0;">👥 Collaborative Filtering</h4>
-                                <p><strong>The Idea:</strong> "People like you also liked..."</p>
-                                <p>Recommendations based on what similar users liked or what similar items were rated highly.</p>
-                            <div class="callout" style="padding: 10px; border-radius: 8px; margin: 10px 0;">
-                                    <strong>Example:</strong> If you and I both loved Marvel movies, and I also loved Star Wars, the system might recommend Star Wars to you!
-                                </div>
-                            </div>
-
-                            <div style="border: 2px solid #ff6b6b; border-radius: 10px; padding: 20px;">
-                                <h4 style="color: #ff6b6b; margin-top: 0;">📋 Content-Based Filtering</h4>
-                                <p><strong>The Idea:</strong> "More of what you like..."</p>
-                                <p>Recommendations based on the features/characteristics of items you've liked before.</p>
-                            <div class="callout" style="padding: 10px; border-radius: 8px; margin: 10px 0;">
-                                    <strong>Example:</strong> If you love action movies with superheroes, the system recommends more action superhero movies!
-                                </div>
-                            </div>
-
-                            <div style="border: 2px solid #4ecdc4; border-radius: 10px; padding: 20px;">
-                                <h4 style="color: #4ecdc4; margin-top: 0;">🤝 Hybrid Systems</h4>
-                                <p><strong>The Idea:</strong> "Best of both worlds..."</p>
-                                <p>Combines collaborative and content-based approaches for more accurate recommendations.</p>
-                            <div class="callout" style="padding: 10px; border-radius: 8px; margin: 10px 0;">
-                                    <strong>Example:</strong> Netflix uses both your viewing history AND what similar users watch to recommend content!
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>🎯 Focus of This Course</h4>
-                        <p>We'll dive deep into <strong>Collaborative Filtering</strong> - the most widely used approach in industry. We'll explore algorithms like <strong>SVD</strong>, <strong>KNN</strong>, and <strong>EASE</strong> using real movie rating data!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- DATA EXPLORATION SECTION -->
-        <div id="data-exploration" class="section" role="tabpanel" aria-labelledby="tab-data-exploration" aria-hidden="true">
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">3</span>MovieLens Dataset - Our Learning Playground</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🎬 Welcome to MovieLens!</h3>
-                    <p>We'll be working with the famous MovieLens 100K dataset - 100,000 movie ratings from real users. This dataset is perfect for learning because it's large enough to be realistic but small enough to process quickly!</p>
-                    
-                    <div class="result-box">
-                        <h4>📊 Dataset Overview:</h4>
-                        <div class="metric-grid">
-                            <div class="metric-card">
-                                <h3>100,000</h3>
-                                <p>Total Ratings</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>943</h3>
-                                <p>Unique Users</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>1,682</h3>
-                                <p>Unique Movies</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>93.7%</h3>
-                                <p>Sparsity</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="term-definition">
-                        <h5>What's in a Rating?</h5>
-                        <p>Each rating consists of: (user_id, movie_id, rating, timestamp). For example: User 196 gave Movie 242 a rating of 3 stars.</p>
-                    </div>
-
-                    <div class="visualization-container">
-                        <h4>🕳️ The Sparsity Problem</h4>
-                        <p>Most users only rate a tiny fraction of available movies. This creates a sparse matrix where 93.7% of data is missing!</p>
-                        
-                        <div id="sparsity-demo" style="text-align: center; margin: 20px 0;">
-                            <div class="callout" style="display: inline-block; padding: 15px; border-radius: 8px;">
-                                <div style="font-family: monospace; margin: 10px 0;">
-                                    <div>[5, 0, 0, 4, 0, 0, 0, 3, 0, 0]</div>
-                                    <div>[0, 0, 3, 0, 0, 5, 0, 0, 0, 0]</div>
-                                    <div>[2, 0, 0, 0, 0, 0, 4, 0, 0, 1]</div>
-                                    <div>[0, 4, 0, 0, 0, 0, 0, 0, 5, 0]</div>
-                                </div>
-                                <p style="margin: 10px 0; color: #666;">Only <span style="color: #ff6b6b; font-weight: bold;">6.3%</span> of cells have ratings!</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>💡 Why Sparsity Matters</h4>
-                        <p>• <strong>Cold Start:</strong> Hard to recommend to new users<br>
-                        • <strong>Memory Efficient:</strong> We use sparse matrices to save 90%+ memory<br>
-                        • <strong>Algorithm Challenge:</strong> Must work with mostly missing data</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- COLLABORATIVE FILTERING SECTION -->
-        <div id="collaborative-filtering" class="section" role="tabpanel" aria-labelledby="tab-collaborative-filtering" aria-hidden="true">
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">4</span>Collaborative Filtering - The Heart of Recommendations</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>👥 How Collaborative Filtering Works</h3>
-                    <p>Collaborative filtering is based on a simple but powerful idea: <strong>"People who agreed in the past will agree in the future."</strong></p>
-                    
-                    <div class="visualization-container">
-                        <h4>🎯 Interactive Demo: Find Your Movie Twin!</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
-                            <div onclick="showUserComparison(1)" style="border: 1px solid var(--border); background: var(--card-bg); color: var(--text); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s;">
-                                <h5 style="margin: 0 0 10px 0; color: #667eea;">👤 User A (You)</h5>
-                                <div>🎬 Titanic: ⭐⭐⭐⭐⭐</div>
-                                <div>🦸 Batman: ⭐⭐⭐⭐</div>
-                                <div>🚀 Star Wars: ⭐⭐⭐⭐⭐</div>
-                            </div>
-                            
-                            <div onclick="showUserComparison(2)" style="border: 1px solid var(--border); background: var(--card-bg); color: var(--text); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s;">
-                                <h5 style="margin: 0 0 10px 0; color: #4ecdc4;">👤 User B (Similar)</h5>
-                                <div>🎬 Titanic: ⭐⭐⭐⭐⭐</div>
-                                <div>🦸 Batman: ⭐⭐⭐⭐</div>
-                                <div>🚀 Star Wars: ⭐⭐⭐⭐⭐</div>
-                                <div>🤖 Terminator: ⭐⭐⭐⭐</div>
-                            </div>
-                        </div>
-                        
-                        <div id="similarity-result" class="callout" style="text-align: center; margin: 15px 0;">
-                            <p><strong>💡 Click on User B to see why they're similar!</strong></p>
-                        </div>
-                    </div>
-
-                    <div class="term-definition">
-                        <h5>Two Types of Collaborative Filtering</h5>
-                        <p><strong>User-Based:</strong> Find users similar to you and recommend what they liked.<br>
-                        <strong>Item-Based:</strong> Find items similar to what you liked and recommend those.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">5</span>Predicting Ratings - The Math Behind the Magic</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🔮 How Do We Predict Your Rating?</h3>
-                    <p>Once we find similar users, we predict ratings using a weighted average based on similarity scores.</p>
-                    
-                    <div class="visualization-container">
-                        <h4>📊 Rating Prediction Example</h4>
-                        <div class="callout" style="padding: 20px; border-radius: 10px;">
-                            <h5>🎬 Predicting Your Rating for "Avatar"</h5>
-                            
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
-                                <div>
-                                    <h6>Similar Users' Ratings:</h6>
-                                    <div>👤 User 1: ⭐⭐⭐⭐⭐ (Similarity: 0.8)</div>
-                                    <div>👤 User 2: ⭐⭐⭐⭐ (Similarity: 0.7)</div>
-                                    <div>👤 User 3: ⭐⭐⭐⭐⭐ (Similarity: 0.6)</div>
-                                </div>
-                                
-                                <div>
-                                    <h6>Weighted Calculation:</h6>
-                                    <div class="callout" style="font-family: monospace; padding: 10px; border-radius: 8px;">
-                                        5 × 0.8 = 4.0<br>
-                                        4 × 0.7 = 2.8<br>
-                                        5 × 0.6 = 3.0<br>
-                                        <hr style="margin: 5px 0;">
-                                        Sum = 9.8<br>
-                                        Weights = 2.1<br>
-                                        <strong>Result = 4.67 ⭐</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>🧠 Key Insight</h4>
-                        <p>Users with higher similarity scores have more influence on the prediction. This weighted approach gives us more accurate recommendations than simple averages!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ALGORITHMS SECTION -->
-        <div id="algorithms" class="section" role="tabpanel" aria-labelledby="tab-algorithms" aria-hidden="true">
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">6</span>SVD - Singular Value Decomposition Magic</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🎭 SVD: Finding Hidden Patterns in Movie Preferences</h3>
-                    <p>SVD is like finding the "DNA" of movie preferences. It discovers hidden factors that explain why you like certain movies - like "action level", "romance factor", or "sci-fi intensity"!</p>
-                    
-                    <div class="visualization-container">
-                        <h4>🧬 How SVD Works: Matrix Factorization</h4>
-                        <div style="text-align: center; margin: 20px 0;">
-                            <div style="display: inline-flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center;">
-                                <div style="background: #ff6b6b; color: white; padding: 20px; border-radius: 10px;">
-                                    <strong>Original Matrix</strong><br>
-                                    Users × Movies<br>
-                                    (943 × 1682)
-                                </div>
-                                <span style="font-size: 2em;">→</span>
-                                <div style="background: #4ecdc4; color: white; padding: 20px; border-radius: 10px;">
-                                    <strong>User Features</strong><br>
-                                    Users × Factors<br>
-                                    (943 × 50)
-                                </div>
-                                <span style="font-size: 2em;">×</span>
-                                <div style="background: #ffd93d; color: black; padding: 20px; border-radius: 10px;">
-                                    <strong>Movie Features</strong><br>
-                                    Factors × Movies<br>
-                                    (50 × 1682)
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="callout" style="padding: 15px; border-radius: 10px; margin: 15px 0;">
-                            <h5>🎯 What are these "Factors"?</h5>
-                            <p>Think of factors as movie genres or characteristics that SVD discovers automatically:</p>
-                            <ul style="text-align: left; display: inline-block;">
-                                <li><strong>Factor 1:</strong> How much action/adventure</li>
-                                <li><strong>Factor 2:</strong> Romance level</li>
-                                <li><strong>Factor 3:</strong> Comedy factor</li>
-                                <li><strong>Factor 4:</strong> Sci-fi/fantasy elements</li>
-                                <li>... and 46 more hidden patterns!</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span><i class="fas fa-code"></i> SVD in Action</span>
-                            <div>
-                                <span class="code-language">Python</span>
-                                <button class="copy-button" onclick="copyCode(this)">
-                                    <i class="fas fa-copy"></i> Copy
-                                </button>
-                            </div>
-                        </div>
-                        <div class="code-content">
-                            <pre><code><span class="keyword">from</span> <span class="variable">surprise</span> <span class="keyword">import</span> <span class="variable">SVD</span>
-
-<span class="comment"># Initialize SVD with 50 factors</span>
-<span class="variable">algo</span> = <span class="function">SVD</span>(<span class="variable">n_factors</span>=<span class="number">50</span>, <span class="variable">random_state</span>=<span class="number">42</span>)
-
-<span class="comment"># Train the model</span>
-<span class="variable">algo</span>.<span class="function">fit</span>(<span class="variable">trainset</span>)
-
-<span class="comment"># Make predictions</span>
-<span class="variable">predictions</span> = <span class="variable">algo</span>.<span class="function">test</span>(<span class="variable">testset</span>)
-
-<span class="comment"># Evaluate performance</span>
-<span class="variable">rmse</span> = <span class="function">accuracy.rmse</span>(<span class="variable">predictions</span>)
-<span class="function">print</span>(<span class="string">f"RMSE: {rmse:.4f}"</span>)</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="result-box">
-                        <h4>🎉 SVD Results on MovieLens</h4>
-                        <div class="metric-grid">
-                            <div class="metric-card">
-                                <h3>0.6757</h3>
-                                <p>RMSE Score</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>0.5339</h3>
-                                <p>MAE Score</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>50</h3>
-                                <p>Hidden Factors</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>⚡</h3>
-                                <p>Fast Training</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>🚀 Why SVD is Amazing</h4>
-                        <p>• <strong>Dimensionality Reduction:</strong> Compresses data while keeping important patterns<br>
-                        • <strong>Handles Sparsity:</strong> Works great with missing data<br>
-                        • <strong>Discovers Patterns:</strong> Finds hidden relationships automatically</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">7</span>KNN - K-Nearest Neighbors Approach</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>👫 KNN: Finding Your Recommendation Neighbors</h3>
-                    <p>KNN is like asking your most similar friends for movie recommendations. It finds the K most similar users (or items) and uses their preferences to make predictions.</p>
-                    
-                    <div class="visualization-container">
-                        <h4>🎯 How KNN Finds Similar Users</h4>
-                        <div class="callout" style="padding: 20px; border-radius: 10px;">
-                            <div style="text-align: center; margin-bottom: 20px;">
-                                <h5>Finding 3 Most Similar Users (K=3)</h5>
-                            </div>
-                            
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                                <div style="background: #667eea; color: white; padding: 15px; border-radius: 8px; text-align: center;">
-                                    <strong>👤 You</strong><br>
-                                    Action: ❤️❤️❤️<br>
-                                    Romance: ❤️<br>
-                                    Comedy: ❤️❤️
-                                </div>
-                                
-                                <div style="background: #4ecdc4; color: white; padding: 15px; border-radius: 8px; text-align: center;">
-                                    <strong>👤 Neighbor 1</strong><br>
-                                    Similarity: 0.89<br>
-                                    Action: ❤️❤️❤️<br>
-                                    Romance: ❤️<br>
-                                    Comedy: ❤️❤️
-                                </div>
-                                
-                                <div style="background: #ffd93d; color: black; padding: 15px; border-radius: 8px; text-align: center;">
-                                    <strong>👤 Neighbor 2</strong><br>
-                                    Similarity: 0.75<br>
-                                    Action: ❤️❤️<br>
-                                    Romance: ❤️<br>
-                                    Comedy: ❤️❤️❤️
-                                </div>
-                                
-                                <div style="background: #ff6b6b; color: white; padding: 15px; border-radius: 8px; text-align: center;">
-                                    <strong>👤 Neighbor 3</strong><br>
-                                    Similarity: 0.68<br>
-                                    Action: ❤️❤️❤️<br>
-                                    Romance: ❤️❤️<br>
-                                    Comedy: ❤️
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="term-definition">
-                        <h5>Similarity Metrics in KNN</h5>
-                        <p><strong>Cosine Similarity:</strong> Measures angle between user preference vectors<br>
-                        <strong>Pearson Correlation:</strong> Measures linear relationship between ratings<br>
-                        <strong>Euclidean Distance:</strong> Geometric distance in rating space</p>
-                    </div>
-
-                    <div class="result-box">
-                        <h4>📊 KNN vs SVD Performance</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
-                            <div style="text-align: center;">
-                                <h5 style="color: #4ecdc4; margin-top: 0;">✅ SVD</h5>
-                                <div>RMSE: <strong>0.6757</strong></div>
-                                <div>MAE: <strong>0.5339</strong></div>
-                                <div style="color: #059669;">✨ Better Accuracy</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <h5 style="color: #ff6b6b; margin-top: 0;">📊 KNN</h5>
-                                <div>RMSE: <strong>0.8887</strong></div>
-                                <div>MAE: <strong>0.6891</strong></div>
-                                <div style="color: #dc2626;">🐌 Slower, Less Accurate</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>🤔 When to Use KNN vs SVD</h4>
-                        <p>• <strong>KNN:</strong> More interpretable, good for explanation "Users like you also liked..."<br>
-                        • <strong>SVD:</strong> Better accuracy, faster for large datasets, handles sparsity better</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ADVANCED SECTION -->
-        <div id="advanced" class="section" role="tabpanel" aria-labelledby="tab-advanced" aria-hidden="true">
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">8</span>Cold Start Problem & Solutions</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🥶 The Cold Start Challenge</h3>
-                    <p>What happens when a completely new user joins your platform? They have no ratings, no history, no similar users to compare with. This is the "cold start" problem!</p>
-                    
-                    <div class="visualization-container">
-                        <h4>❄️ Cold Start Scenarios</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                            <div style="border: 2px solid #3b82f6; border-radius: 10px; padding: 15px;">
-                                <h5 style="color: #3b82f6; margin-top: 0;">👶 New User</h5>
-                                <p>Zero ratings, no preference history</p>
-                                <p><strong>Solution:</strong> Recommend popular items</p>
-                            </div>
-                            
-                            <div style="border: 2px solid #10b981; border-radius: 10px; padding: 15px;">
-                                <h5 style="color: #10b981; margin-top: 0;">🆕 New Item</h5>
-                                <p>Just added, no ratings yet</p>
-                                <p><strong>Solution:</strong> Content-based features</p>
-                            </div>
-                            
-                            <div style="border: 2px solid #f59e0b; border-radius: 10px; padding: 15px;">
-                                <h5 style="color: #f59e0b; margin-top: 0;">📱 New System</h5>
-                                <p>Fresh platform, minimal data</p>
-                                <p><strong>Solution:</strong> Hybrid approaches</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span><i class="fas fa-code"></i> Popular Items Strategy</span>
-                            <div>
-                                <span class="code-language">Python</span>
-                                <button class="copy-button" onclick="copyCode(this)">
-                                    <i class="fas fa-copy"></i> Copy
-                                </button>
-                            </div>
-                        </div>
-                        <div class="code-content">
-                            <pre><code><span class="keyword">def</span> <span class="function">get_popular_items</span>(<span class="variable">ratings_df</span>, <span class="variable">min_ratings</span>=<span class="number">50</span>):
-    <span class="string">"""Get most popular items for cold start users"""</span>
-    <span class="variable">item_stats</span> = <span class="variable">ratings_df</span>.<span class="function">groupby</span>(<span class="string">'item_id'</span>).<span class="function">agg</span>({
-        <span class="string">'rating'</span>: [<span class="string">'count'</span>, <span class="string">'mean'</span>]
-    })
-    
-    <span class="comment"># Filter items with sufficient ratings</span>
-    <span class="variable">popular_items</span> = <span class="variable">item_stats</span>[
-        <span class="variable">item_stats</span>[(<span class="string">'rating'</span>, <span class="string">'count'</span>)] >= <span class="variable">min_ratings</span>
-    ]
-    
-    <span class="comment"># Sort by average rating</span>
-    <span class="variable">popular_items</span> = <span class="variable">popular_items</span>.<span class="function">sort_values</span>(
-        (<span class="string">'rating'</span>, <span class="string">'mean'</span>), <span class="variable">ascending</span>=<span class="keyword">False</span>
-    )
-    
-    <span class="keyword">return</span> <span class="variable">popular_items</span>.<span class="function">head</span>(<span class="number">10</span>)
-
-<span class="comment"># For new users, recommend top popular movies</span>
-<span class="variable">cold_start_recs</span> = <span class="function">get_popular_items</span>(<span class="variable">ratings_df</span>)
-<span class="function">print</span>(<span class="string">"Top recommendations for new users:"</span>)
-<span class="function">print</span>(<span class="variable">cold_start_recs</span>)</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="result-box">
-                        <h4>🎬 Top Cold Start Recommendations</h4>
-                        <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
-                            <div>1. ⭐ Star Wars (4.36 avg, 583 ratings)</div>
-                            <div>2. 🚢 Titanic (4.16 avg, 508 ratings)</div>
-                            <div>3. 🦸 Batman (4.28 avg, 413 ratings)</div>
-                            <div>4. 👑 Lion King (4.25 avg, 420 ratings)</div>
-                            <div>5. 🕷️ Spider-Man (4.29 avg, 390 ratings)</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">9</span>EASE Model - Embarrassingly Simple Yet Powerful</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🚀 EASE: When Simple Beats Complex</h3>
-                    <p>EASE (Embarrassingly Shallow Autoencoders) proves that sometimes the simplest solutions work best. It uses a closed-form mathematical solution to learn item-item similarities directly!</p>
-                    
-                    <div class="visualization-container">
-                        <h4>🧮 How EASE Works in 4 Steps</h4>
-                        <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
-                                <strong>Step 1:</strong> Compute Gram Matrix (X^T × X) - Item co-occurrence
-                            </div>
-                            <div style="background: #dcfce7; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
-                                <strong>Step 2:</strong> Add regularization to diagonal (prevent overfitting)
-                            </div>
-                            <div class="callout" style="padding: 15px; border-radius: 10px;">
-                                <strong>Step 3:</strong> Compute matrix inverse (closed-form solution!)
-                            </div>
-                            <div style="background: #fce7f3; padding: 15px; border-radius: 8px; border-left: 4px solid #ec4899;">
-                                <strong>Step 4:</strong> Zero diagonal (items don't recommend themselves)
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="result-box">
-                        <h4>⚡ EASE Results</h4>
-                        <div class="metric-grid">
-                            <div class="metric-card">
-                                <h3>✨</h3>
-                                <p>No Training Loops</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>🎯</h3>
-                                <p>Closed-Form Solution</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>⚡</h3>
-                                <p>Fast Predictions</p>
-                            </div>
-                            <div class="metric-card">
-                                <h3>🏆</h3>
-                                <p>State-of-art Results</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>🤔 Why EASE is Revolutionary</h4>
-                        <p>• <strong>No Hyperparameters:</strong> Only one regularization parameter to tune<br>
-                        • <strong>Embarrassingly Simple:</strong> Just matrix operations, no complex optimization<br>
-                        • <strong>Surprisingly Effective:</strong> Often outperforms complex deep learning models</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- HANDS-ON SECTION -->
-        <div id="hands-on" class="section" role="tabpanel" aria-labelledby="tab-hands-on" aria-hidden="true">
-            <div class="notebook-cell">
-                <div class="cell-header" onclick="toggleCell(this)">
-                    <span><span class="question-number">10</span>Build Your Own Recommender</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="cell-content">
-                    <h3>🛠️ Time to Build!</h3>
-                    <p>Now that you understand the theory, let's build a complete recommendation system step by step!</p>
-                    
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span><i class="fas fa-code"></i> Complete Recommendation System</span>
-                            <div>
-                                <span class="code-language">Python</span>
-                                <button class="copy-button" onclick="copyCode(this)">
-                                    <i class="fas fa-copy"></i> Copy
-                                </button>
-                            </div>
-                        </div>
-                        <div class="code-content">
-                            <pre><code><span class="comment"># Complete MovieLens Recommendation System</span>
-<span class="keyword">import</span> <span class="variable">pandas</span> <span class="keyword">as</span> <span class="variable">pd</span>
-<span class="keyword">import</span> <span class="variable">numpy</span> <span class="keyword">as</span> <span class="variable">np</span>
-<span class="keyword">from</span> <span class="variable">surprise</span> <span class="keyword">import</span> <span class="variable">Dataset</span>, <span class="variable">SVD</span>, <span class="variable">accuracy</span>
-<span class="keyword">from</span> <span class="variable">surprise.model_selection</span> <span class="keyword">import</span> <span class="variable">train_test_split</span>
-
-<span class="comment"># 1. Load and prepare data</span>
-<span class="variable">data</span> = <span class="variable">Dataset</span>.<span class="function">load_builtin</span>(<span class="string">'ml-100k'</span>)
-<span class="variable">trainset</span>, <span class="variable">testset</span> = <span class="function">train_test_split</span>(<span class="variable">data</span>, <span class="variable">test_size</span>=<span class="number">0.25</span>)
-
-<span class="comment"># 2. Train SVD model</span>
-<span class="variable">model</span> = <span class="function">SVD</span>(<span class="variable">n_factors</span>=<span class="number">50</span>, <span class="variable">random_state</span>=<span class="number">42</span>)
-<span class="variable">model</span>.<span class="function">fit</span>(<span class="variable">trainset</span>)
-
-<span class="comment"># 3. Make predictions</span>
-<span class="variable">predictions</span> = <span class="variable">model</span>.<span class="function">test</span>(<span class="variable">testset</span>)
-<span class="variable">rmse</span> = <span class="function">accuracy.rmse</span>(<span class="variable">predictions</span>)
-
-<span class="comment"># 4. Get recommendations for a user</span>
-<span class="keyword">def</span> <span class="function">get_recommendations</span>(<span class="variable">model</span>, <span class="variable">user_id</span>, <span class="variable">n_recs</span>=<span class="number">5</span>):
-    <span class="comment"># Get all items not rated by user</span>
-    <span class="variable">all_items</span> = <span class="function">set</span>([<span class="variable">trainset</span>.<span class="function">to_raw_iid</span>(<span class="variable">i</span>) <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="function">range</span>(<span class="variable">trainset</span>.<span class="variable">n_items</span>)])
-    <span class="variable">user_items</span> = <span class="function">set</span>([<span class="variable">item</span> <span class="keyword">for</span> <span class="variable">item</span>, <span class="variable">rating</span> <span class="keyword">in</span> <span class="variable">trainset</span>.<span class="variable">ur</span>[<span class="variable">trainset</span>.<span class="function">to_inner_uid</span>(<span class="variable">user_id</span>)]])
-    <span class="variable">unrated_items</span> = <span class="variable">all_items</span> - <span class="variable">user_items</span>
-    
-    <span class="comment"># Predict ratings for unrated items</span>
-    <span class="variable">predictions</span> = []
-    <span class="keyword">for</span> <span class="variable">item</span> <span class="keyword">in</span> <span class="variable">unrated_items</span>:
-        <span class="variable">pred</span> = <span class="variable">model</span>.<span class="function">predict</span>(<span class="variable">user_id</span>, <span class="variable">item</span>)
-        <span class="variable">predictions</span>.<span class="function">append</span>((<span class="variable">item</span>, <span class="variable">pred</span>.<span class="variable">est</span>))
-    
-    <span class="comment"># Sort by predicted rating and return top N</span>
-    <span class="variable">predictions</span>.<span class="function">sort</span>(<span class="variable">key</span>=<span class="keyword">lambda</span> <span class="variable">x</span>: <span class="variable">x</span>[<span class="number">1</span>], <span class="variable">reverse</span>=<span class="keyword">True</span>)
-    <span class="keyword">return</span> <span class="variable">predictions</span>[:<span class="variable">n_recs</span>]
-
-<span class="comment"># 5. Get recommendations for user</span>
-<span class="variable">user_recs</span> = <span class="function">get_recommendations</span>(<span class="variable">model</span>, <span class="string">'196'</span>, <span class="number">5</span>)
-<span class="function">print</span>(<span class="string">"Recommendations for user 196:"</span>)
-<span class="keyword">for</span> <span class="variable">item</span>, <span class="variable">rating</span> <span class="keyword">in</span> <span class="variable">user_recs</span>:
-    <span class="function">print</span>(<span class="string">f"Movie {item}: Predicted rating {rating:.2f}"</span>)</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="visualization-container">
-                        <h4>🎯 Interactive Model Comparison</h4>
-                        <div style="margin: 20px 0;">
-                            <button onclick="showModelComparison()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
-                                🚀 Compare All Models
-                            </button>
-                        </div>
-                        
-                        <div id="model-comparison" style="display: none; margin: 20px 0;"></div>
-                    </div>
-
-                    <div class="insight-box">
-                        <h4>🎓 What You've Learned</h4>
-                        <p>Congratulations! You now understand:<br>
-                        • <strong>Collaborative Filtering:</strong> The foundation of modern recommenders<br>
-                        • <strong>SVD:</strong> Matrix factorization for finding hidden patterns<br>
-                        • <strong>KNN:</strong> Neighborhood-based similarity approaches<br>
-                        • <strong>EASE:</strong> Simple yet powerful closed-form solutions<br>
-                        • <strong>Cold Start:</strong> Handling new users and items<br>
-                        • <strong>Evaluation:</strong> RMSE, MAE, and real-world considerations</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- ====================  PORTFOLIO NAV  ==================== -->
+  <nav class="portfolio-nav" aria-label="Primary">
+    <div class="portfolio-nav__inner">
+      <a href="https://github.com/ArielSoothy" class="portfolio-nav__brand" aria-label="Ariel Soothy — Portfolio">
+        <span class="portfolio-nav__brand-dot" aria-hidden="true"></span>
+        <span>Ariel Soothy</span>
+      </a>
+      <ul class="portfolio-nav__links" role="list">
+        <li><a class="portfolio-nav__link" href="https://arielsoothy.github.io/AI-Deep-Learning-Course-MIMIC-III-Dataset-Analysis/">MIMIC-III</a></li>
+        <li><a class="portfolio-nav__link" href="https://arielsoothy.github.io/NLP/">NLP</a></li>
+        <li><a class="portfolio-nav__link" href="https://arielsoothy.github.io/Project-4-TIC-TAC-TOE-with-RL/">Tic-Tac-Toe RL</a></li>
+        <li><a class="portfolio-nav__link portfolio-nav__link--active" href="#" aria-current="page">Recommendations</a></li>
+      </ul>
+      <div class="portfolio-nav__actions">
+        <a class="portfolio-nav__btn" href="https://github.com/ArielSoothy/Recommendation-Systems" aria-label="View source on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.02c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.47.11-3.06 0 0 .96-.31 3.15 1.18a10.91 10.91 0 015.74 0c2.18-1.49 3.14-1.18 3.14-1.18.62 1.59.23 2.77.11 3.06.73.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.79.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        </a>
+        <button class="portfolio-nav__btn" data-theme-toggle type="button" aria-label="Switch theme">
+          <svg data-theme-icon="dark"  width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg data-theme-icon="light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="portfolio-nav__btn portfolio-nav__mobile-toggle" data-mobile-toggle type="button" aria-label="Toggle navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
     </div>
+  </nav>
 
-    <script>
-        // JavaScript for interactive functionality
-        function showSection(sectionId, pillEl) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-                section.setAttribute('aria-hidden', 'true');
-            });
-            
-            // Show selected section
-            const activeSection = document.getElementById(sectionId);
-            if (activeSection) {
-                activeSection.classList.add('active');
-                activeSection.setAttribute('aria-hidden', 'false');
-            }
-            
-            // Update nav pills
-            const navPills = document.querySelectorAll('.nav-pill');
-            navPills.forEach(pill => {
-                pill.classList.remove('active');
-                pill.setAttribute('aria-selected', 'false');
-            });
-            if (pillEl && pillEl.classList) {
-                pillEl.classList.add('active');
-                pillEl.setAttribute('aria-selected', 'true');
-            }
+  <!-- ====================  HERO  ==================== -->
+  <header class="hero">
+    <div class="container hero__inner">
+      <span class="kicker">Project 02 · Recommendation Systems</span>
+      <h1 class="hero__title">From-scratch <span class="accent">collaborative filtering</span> on MovieLens-100K.</h1>
+      <p class="hero__subtitle">An interactive walkthrough of SVD, KNN, and EASE — three algorithms behind the systems that decide what you watch next. Implemented from the math up, evaluated with cross-validation, presented honestly.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#algorithms">View algorithms →</a>
+        <a class="btn btn--secondary" href="https://github.com/ArielSoothy/Recommendation-Systems" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.02c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.47.11-3.06 0 0 .96-.31 3.15 1.18a10.91 10.91 0 015.74 0c2.18-1.49 3.14-1.18 3.14-1.18.62 1.59.23 2.77.11 3.06.73.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.79.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+          Source code
+        </a>
+      </div>
 
-            // Update URL hash for deep linking without scrolling
-            if (history.replaceState) {
-                history.replaceState(null, '', '#' + sectionId);
-            } else {
-                location.hash = sectionId;
-            }
-        }
+      <div class="hero__pillrow">
+        <span class="pill pill--accent">Python</span>
+        <span class="pill pill--accent">NumPy</span>
+        <span class="pill pill--accent">Surprise</span>
+        <span class="pill pill--accent">EASE from scratch</span>
+        <span class="pill">5-fold CV</span>
+      </div>
+    </div>
+  </header>
 
-        function toggleCell(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('i');
-            
-            if (content.classList.contains('active')) {
-                content.classList.remove('active');
-                header.classList.remove('expanded');
-                header.setAttribute('aria-expanded', 'false');
-                content.setAttribute('aria-hidden', 'true');
-            } else {
-                content.classList.add('active');
-                header.classList.add('expanded');
-                header.setAttribute('aria-expanded', 'true');
-                content.setAttribute('aria-hidden', 'false');
-            }
-        }
+  <!-- ====================  SECTION: DATASET  ==================== -->
+  <section class="section" id="dataset">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="kicker">The data</span>
+        <h2>MovieLens-100K — small, sparse, real.</h2>
+        <p>100,000 ratings from 943 users on 1,682 movies. Each user has only seen ~6% of the catalogue — the central challenge of every recommender.</p>
+      </div>
 
-        function copyCode(button) {
-            const codeBlock = button.closest('.code-block').querySelector('code');
-            const text = codeBlock.textContent;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                }, 2000);
-            });
-        }
-
-        function showUserComparison(userId) {
-            const resultDiv = document.getElementById('similarity-result');
-            
-            if (userId === 2) {
-                resultDiv.innerHTML = `
-                    <h5 style="color: #4ecdc4; margin-top: 0;">🎯 High Similarity Detected!</h5>
-                    <p><strong>Common Movies:</strong> Titanic (both 5⭐), Batman (both 4⭐), Star Wars (both 5⭐)</p>
-                    <p><strong>Similarity Score:</strong> 0.87 (Very High!)</p>
-                    <p><strong>💡 Recommendation:</strong> You should watch Terminator - User B rated it 4⭐</p>
-                `;
-                resultDiv.className = 'callout callout-success';
-            }
-        }
-
-        function showModelComparison() {
-            const comparisonDiv = document.getElementById('model-comparison');
-            comparisonDiv.style.display = comparisonDiv.style.display === 'none' ? 'block' : 'none';
-        }
-
-        // Auto-expand first cell in each section and add keyboard accessibility
-        document.addEventListener('DOMContentLoaded', function() {
-            // Theme toggle: persist in localStorage, default to dark mode
-            const root = document.documentElement;
-            const toggleBtn = document.getElementById('theme-toggle');
-            const label = document.getElementById('theme-label');
-            const storedTheme = localStorage.getItem('theme');
-            
-            // Default to dark mode if no preference is stored
-            if (storedTheme === 'light') {
-                // User explicitly chose light mode
-                root.removeAttribute('data-theme');
-                toggleBtn.setAttribute('aria-pressed', 'false');
-                label.textContent = 'Dark mode';
-            } else {
-                // Default to dark mode (either stored 'dark' or no preference)
-                root.setAttribute('data-theme', 'dark');
-                toggleBtn.setAttribute('aria-pressed', 'true');
-                label.textContent = 'Light mode';
-                if (!storedTheme) {
-                    localStorage.setItem('theme', 'dark');
-                }
-            }
-            toggleBtn?.addEventListener('click', () => {
-                const isDark = root.getAttribute('data-theme') === 'dark';
-                if (isDark) {
-                    root.removeAttribute('data-theme');
-                    localStorage.setItem('theme', 'light');
-                    toggleBtn.setAttribute('aria-pressed', 'false');
-                    label.textContent = 'Dark mode';
-                } else {
-                    root.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('theme', 'dark');
-                    toggleBtn.setAttribute('aria-pressed', 'true');
-                    label.textContent = 'Light mode';
-                }
-            });
-            const firstCells = document.querySelectorAll('.section .notebook-cell:first-child .cell-header');
-            firstCells.forEach(header => {
-                toggleCell(header);
-            });
-
-            // Make all cell headers keyboard accessible
-            const cellHeaders = document.querySelectorAll('.cell-header');
-            cellHeaders.forEach(header => {
-                header.setAttribute('role', 'button');
-                header.setAttribute('tabindex', '0');
-                header.setAttribute('aria-expanded', header.classList.contains('expanded') ? 'true' : 'false');
-                const content = header.nextElementSibling;
-                if (content) content.setAttribute('aria-hidden', content.classList.contains('active') ? 'false' : 'true');
-                header.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleCell(header);
-                    }
-                });
-            });
-
-            // Tab arrow-key navigation and initial hash handling
-            const tabs = Array.from(document.querySelectorAll('.nav-pill'));
-            tabs.forEach((tab, idx) => {
-                tab.addEventListener('keydown', (e) => {
-                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        const next = tabs[(idx + 1) % tabs.length];
-                        next.focus();
-                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
-                        prev.focus();
-                    } else if (e.key === 'Home') {
-                        e.preventDefault();
-                        tabs[0].focus();
-                    } else if (e.key === 'End') {
-                        e.preventDefault();
-                        tabs[tabs.length - 1].focus();
-                    }
-                });
-            });
-
-            // Deep link to section via hash
-            const hash = location.hash && location.hash.replace('#', '');
-            if (hash) {
-                const targetTab = document.querySelector(`.nav-pill[aria-controls="${hash}"]`);
-                if (targetTab) {
-                    showSection(hash, targetTab);
-                }
-            }
-        });
-    </script>
-
-    <!-- Professional Portfolio Footer -->
-    <footer style="margin-top: 60px; padding: 40px 20px; text-align: center; border-top: 1px solid var(--border); background: var(--header-bg);">
-        <div style="max-width: 800px; margin: 0 auto;">
-            <h3 style="color: var(--text); margin: 0 0 20px 0;">About This Project</h3>
-            <p style="color: var(--secondary-text); margin: 0 0 20px 0; line-height: 1.6;">
-                This interactive recommendation systems explorer demonstrates advanced web development skills and 
-                educational design principles. Built as part of the Google/Reichman University AI & Deep Learning course portfolio.
-            </p>
-            <div style="display: flex; justify-content: center; gap: 30px; margin: 25px 0; flex-wrap: wrap;">
-                <a href="https://github.com/ArielSoothy/Recommendation-Systems" target="_blank" rel="noopener" 
-                   style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                    <i class="fab fa-github"></i> Source Code
-                </a>
-                <a href="https://linkedin.com/in/ariel-soothy" target="_blank" rel="noopener" 
-                   style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                    <i class="fab fa-linkedin"></i> LinkedIn Profile
-                </a>
-                                  <a href="https://github.com/ArielSoothy" target="_blank" rel="noopener"
-                     style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                      <i class="fab fa-github"></i> GitHub Profile
-                  </a>
-            </div>
-            <div style="font-size: 0.85em; color: var(--secondary-text); margin-top: 25px;">
-                <p style="margin: 0;">© 2024 Ariel Soothy | Data Engineer at Nuvei | AI & Deep Learning Student</p>
-                <p style="margin: 5px 0 0 0;">Built with HTML5, CSS3, JavaScript | Deployed on GitHub Pages</p>
-            </div>
+      <div class="grid grid--4 reveal">
+        <div class="metric">
+          <div class="metric__label">Ratings</div>
+          <div class="metric__value">100,000</div>
+          <div class="metric__note">Explicit 1–5 stars</div>
         </div>
-    </footer>
+        <div class="metric">
+          <div class="metric__label">Users</div>
+          <div class="metric__value">943</div>
+        </div>
+        <div class="metric">
+          <div class="metric__label">Movies</div>
+          <div class="metric__value">1,682</div>
+        </div>
+        <div class="metric metric--warn">
+          <div class="metric__label">Sparsity</div>
+          <div class="metric__value">93.7<span class="metric__unit">%</span></div>
+          <div class="metric__note">Only 6.3% of user-movie cells have a rating</div>
+        </div>
+      </div>
 
+      <div class="card reveal" style="margin-top: 2.5rem;">
+        <h3 class="card__title">Sparsity, visualized</h3>
+        <p class="card__body">Each green cell is a rating. 94% of the matrix is missing — every algorithm here is a way to fill in those blanks intelligently.</p>
+        <div id="sparsity-demo" style="margin-top: 1.5rem;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================  SECTION: ALGORITHMS  ==================== -->
+  <section class="section section--accent" id="algorithms">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="kicker">Three approaches</span>
+        <h2>SVD, KNN, EASE — same problem, different math.</h2>
+        <p>Each algorithm is implemented and evaluated on the same MovieLens-100K split. The from-scratch EASE uses the closed-form solution; SVD and KNN go through the Surprise library.</p>
+      </div>
+
+      <div class="grid grid--3 reveal">
+        <article class="card card--interactive">
+          <span class="kicker" style="color: var(--success)">Best RMSE</span>
+          <h3 class="card__title">SVD — Matrix Factorization</h3>
+          <p class="card__body">Discovers ~50 latent factors that explain user × movie preferences. The workhorse of modern recommenders.</p>
+          <div class="mono mt-2" style="font-size: 0.85rem; color: var(--text-muted);">R ≈ U · Σ · V<sup>T</sup></div>
+        </article>
+
+        <article class="card card--interactive">
+          <span class="kicker">Most explainable</span>
+          <h3 class="card__title">KNN — Neighborhood</h3>
+          <p class="card__body">Find the k most similar users (or items) by cosine similarity, then predict by weighted average. Slow at scale, but every recommendation has a clear "why".</p>
+          <div class="mono mt-2" style="font-size: 0.85rem; color: var(--text-muted);">r̂<sub>u,i</sub> = Σ sim · r / Σ sim</div>
+        </article>
+
+        <article class="card card--interactive">
+          <span class="kicker" style="color: var(--accent)">Surprisingly competitive</span>
+          <h3 class="card__title">EASE — Closed-form</h3>
+          <p class="card__body">A single linear system: B = (X<sup>T</sup>X + λI)<sup>−1</sup> with diag(B)=0. No iterations, no hyperparameters except λ.</p>
+          <div class="mono mt-2" style="font-size: 0.85rem; color: var(--text-muted);">Implemented from scratch — see notebook</div>
+        </article>
+      </div>
+
+      <div class="section-header reveal" style="margin-top: 4rem;">
+        <span class="kicker">Honest results</span>
+        <h2>Two splits, two stories.</h2>
+        <p>The notebook reports two evaluation modes. The single-split number is what gets quoted in slide decks; the 5-fold cross-validation number is what generalizes. Both are shown.</p>
+      </div>
+
+      <div class="grid grid--2 reveal">
+        <div class="metric metric--good">
+          <div class="metric__label">SVD · Single 75/25 split</div>
+          <div class="metric__value">0.6757 <span class="metric__unit">RMSE</span></div>
+          <div class="metric__sub">MAE 0.5339</div>
+          <div class="metric__note">A lucky split — the published metric from one notebook run.</div>
+        </div>
+        <div class="metric metric--baseline">
+          <div class="metric__label">SVD · 5-fold cross-validation</div>
+          <div class="metric__value">0.9452 <span class="metric__unit">RMSE</span></div>
+          <div class="metric__sub">More representative of true performance</div>
+          <div class="metric__note">MovieLens-100K SVD baselines in the literature land around RMSE 0.93. The CV number is consistent with that.</div>
+        </div>
+      </div>
+
+      <div class="disclosure reveal" role="note">
+        <span class="disclosure__icon" aria-hidden="true">ⓘ</span>
+        <div>
+          <strong>Why both numbers?</strong> The 0.6757 figure was a single 75/25 random split and overstates the model. The 0.9452 cross-validation result is what you should believe — it sits in the same neighborhood as Koren 2009 and the Surprise library's published baseline. Showing both is the only honest way to read this.
+        </div>
+      </div>
+
+      <div class="grid grid--3 reveal mt-3">
+        <div class="metric"><div class="metric__label">EASE (from scratch)</div><div class="metric__value">0.7234 <span class="metric__unit">RMSE</span></div><div class="metric__note">Lucky-split number; CV not run for EASE due to runtime.</div></div>
+        <div class="metric"><div class="metric__label">KNN-baseline</div><div class="metric__value">0.8887 <span class="metric__unit">RMSE</span></div><div class="metric__sub">MAE 0.6891</div></div>
+        <div class="metric metric--baseline"><div class="metric__label">Reference baseline</div><div class="metric__value">~0.93 <span class="metric__unit">RMSE</span></div><div class="metric__note">Typical MovieLens-100K SVD result reported in the literature.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================  SECTION: DEMO  ==================== -->
+  <section class="section" id="demo">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="kicker">Try the math</span>
+        <h2>Weighted-average predictor — the formula in your browser.</h2>
+        <p>This widget runs the exact user-CF prediction formula client-side: <span class="mono">r̂ = Σ(rᵢ · simᵢ) / Σ simᵢ</span>. It's not loading a trained model — it's a live calculator for the math you just read about. Useful for intuition; not a benchmark.</p>
+      </div>
+
+      <div class="disclosure disclosure--info reveal" role="note">
+        <span class="disclosure__icon" aria-hidden="true">ⓘ</span>
+        <div><strong>What this is.</strong> A 3-neighbor weighted-average formula, computed live as you move the sliders. <strong>What it isn't:</strong> a deployed SVD/KNN/EASE model running in-browser. For the real model evaluation see the metrics above and the notebook.</div>
+      </div>
+
+      <div class="card reveal mt-3">
+        <h3 class="card__title">Predict your rating for "Avatar"</h3>
+        <div id="prediction-controls" style="margin-top: 1rem;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================  SECTION: LIMITATIONS  ==================== -->
+  <section class="section section--accent" id="limitations">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="kicker">Honesty</span>
+        <h2>What this project is — and what it isn't.</h2>
+        <p>Course portfolio piece. Two months of work. Real implementations, real evaluation, but real limits worth naming up-front.</p>
+      </div>
+
+      <div class="grid grid--2 reveal">
+        <div class="card">
+          <h3 class="card__title">✓ Real</h3>
+          <ul style="color: var(--text-muted); margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+            <li>SVD, KNN, EASE implementations work on real MovieLens-100K data</li>
+            <li>EASE is implemented from scratch with the correct diag(B)=0 step</li>
+            <li>Cross-validation results match published baselines</li>
+            <li>Open-source — every number is reproducible from the notebook</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="card__title">✗ Not real</h3>
+          <ul style="color: var(--text-muted); margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+            <li>The in-browser demo is the prediction <em>formula</em>, not a deployed model</li>
+            <li>RMSE 0.6757 was a single lucky split; the honest number is the CV ~0.9452</li>
+            <li>No cold-start handling beyond what the libraries provide out of the box</li>
+            <li>No implicit feedback, no temporal dynamics, no production serving stack</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-header reveal" style="margin-top: 3rem;">
+        <h3>What I'd do next</h3>
+      </div>
+      <div class="grid grid--3 reveal">
+        <div class="card"><h4 class="card__title">Add ranking metrics</h4><p class="card__body">Precision@k and recall@k matter more than RMSE for top-N recommendation. The notebook code is there — just needs the eval loop.</p></div>
+        <div class="card"><h4 class="card__title">Compare to neural CF</h4><p class="card__body">Train a small two-tower model with PyTorch and put it head-to-head with EASE. The literature suggests EASE will hold up surprisingly well.</p></div>
+        <div class="card"><h4 class="card__title">Cold-start strategy</h4><p class="card__body">Hybrid with content features (genre, year, cast) for users with &lt;5 ratings — the current eval drops them silently.</p></div>
+      </div>
+
+      <div class="reveal mt-4 text-center">
+        <a class="codelink" href="https://github.com/ArielSoothy/Recommendation-Systems/blob/main/README.md" target="_blank" rel="noopener">
+          <span class="codelink__icon">📓</span>
+          <span>README + notebook on GitHub</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================  PORTFOLIO FOOTER  ==================== -->
+  <footer class="portfolio-footer">
+    <div class="container">
+      <div class="portfolio-footer__grid">
+        <div class="portfolio-footer__brand">
+          <h3>Ariel Soothy</h3>
+          <p>AI &amp; Data Engineer based in Tel Aviv. Building AI-augmented education products and end-to-end ML systems.</p>
+        </div>
+        <div class="portfolio-footer__col">
+          <h4>Course Projects</h4>
+          <ul role="list">
+            <li><a href="https://arielsoothy.github.io/AI-Deep-Learning-Course-MIMIC-III-Dataset-Analysis/">MIMIC-III Analysis</a></li>
+            <li><a href="https://arielsoothy.github.io/NLP/">NLP</a></li>
+            <li><a href="https://arielsoothy.github.io/Project-4-TIC-TAC-TOE-with-RL/">Tic-Tac-Toe RL</a></li>
+            <li><a href="https://arielsoothy.github.io/Recommendation-Systems/">Recommendation Systems</a></li>
+          </ul>
+        </div>
+        <div class="portfolio-footer__col">
+          <h4>Elsewhere</h4>
+          <ul role="list">
+            <li><a href="https://github.com/ArielSoothy">GitHub</a></li>
+            <li><a href="https://www.linkedin.com/in/ariel-soothy/">LinkedIn</a></li>
+            <li><a href="mailto:arielsot1254@gmail.com">Email</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="portfolio-footer__bottom">
+        <span>© <span data-current-year>2026</span> Ariel Soothy. Course portfolio &mdash; Google &amp; Reichman AI / Deep Learning.</span>
+        <div class="portfolio-footer__social" aria-label="Social links">
+          <a href="https://github.com/ArielSoothy" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.02c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.47.11-3.06 0 0 .96-.31 3.15 1.18a10.91 10.91 0 015.74 0c2.18-1.49 3.14-1.18 3.14-1.18.62 1.59.23 2.77.11 3.06.73.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.4-5.25 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.79.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg></a>
+          <a href="https://www.linkedin.com/in/ariel-soothy/" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zm1.77 13.02H3.56V9H7.1v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () { var y = document.querySelector('[data-current-year]'); if (y) y.textContent = new Date().getFullYear(); })();
+  </script>
 </body>
-</html> 
+</html>
